@@ -320,7 +320,7 @@ async def rolldice(ctx):
 @testbot.command()
 async def coinflip(ctx):
     choices = ["Heads", "Tails"]
-    rancoin = random.choice(choices)
-    await ctx.send(f"{rancoin}:coin:")
+    coin = random.choice(choices)
+    await ctx.send(f"{coin}:coin:")
 
 testbot.run(discord_token)

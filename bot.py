@@ -1,13 +1,18 @@
+from re import IGNORECASE
+from discord.ext.commands.errors import CommandNotFound
+from weatherassets import error_message, parse_data, weathermsg
 import discord
 from discord.ext import commands
 import asyncio
-import discordtoken
-from discordtoken import discord_token
+import json
+import requests
+from discordtoken import discord_token, api_key
 import random
 import praw
 from texttoowo import text_to_owo
 from redditmeme import reddit
 from tictactoe import winningConditions, player1, player2, turn, gameOver, board
+from weatherassets import *
 
 
 testbot = commands.Bot(command_prefix="$")
@@ -17,6 +22,7 @@ filtered_words = ["fuck", "bullshit"]
 @testbot.event
 async def on_ready():
     print("Test bot ready to go")
+    await testbot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='$help'))
 
 
 @testbot.event
@@ -24,8 +30,20 @@ async def on_message(msg):
     for word in filtered_words:
         if word in msg.content:
             await msg.delete()
-    
+
     await testbot.process_commands(msg)
+    try:
+        if msg.author != testbot.user and msg.content.startswith('$weather'):
+            if len((msg.content.replace('$weather', ''))) >= 1:
+                location = msg.content.replace('$weather ', '')
+                url = f'http://api.openweathermap.org/data/2.5/weather?q={location}&appid={api_key}&units=metric'
+                try:
+                    data = parse_data(json.loads(requests.get(url).content)['main'])
+                    await msg.channel.send(embed=weathermsg(data, location))
+                except KeyError:
+                    await msg.channel.send(embed=error_message(location))
+    except CommandNotFound:
+        pass
 
 
 @testbot.event
@@ -34,8 +52,6 @@ async def on_command_error(ctx,error):
         await ctx.send("You are missing the required permissions to do that.")
     elif isinstance(error,commands.CommandInvokeError):
         await ctx.send("Message cannot be empty")
-    elif isinstance(error,commands.CommandNotFound):
-        await ctx.send("That command does not exist")
     elif isinstance(error,commands.MissingRequiredArgument):
         await ctx.send("Please enter the required arguments")
     else:

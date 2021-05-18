@@ -52,6 +52,8 @@ async def on_command_error(ctx,error):
         await ctx.send("You are missing the required permissions to do that.")
     elif isinstance(error,commands.CommandInvokeError):
         await ctx.send("Message cannot be empty")
+    elif isinstance(error,commands.CommandNotFound):
+        pass
     elif isinstance(error,commands.MissingRequiredArgument):
         await ctx.send("Please enter the required arguments")
     else:

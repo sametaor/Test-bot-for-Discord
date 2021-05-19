@@ -18,7 +18,7 @@ def weathermsg(data, location):
     location = location.title()
     weathermessage = discord.Embed(title=f'{location} Weather', description=f'Here is the weather data for {location}.', colour=discord.Colour.blurple())
     for key in data:
-        weathermessage.add_field(name=key_features[key], value=str(data[key]))
+        weathermessage.add_field(name=key_features[key], value=data[key], inline=False)
     
     return weathermessage
 

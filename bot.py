@@ -16,6 +16,7 @@ from weatherassets import *
 
 
 testbot = commands.Bot(command_prefix="$")
+
 startup_extensions = ["Cogsforbot.help", "Cogsforbot.chess"]
 
 filtered_words = ["fuck", "bullshit"]
@@ -33,18 +34,15 @@ async def on_message(msg):
             await msg.delete()
 
     await testbot.process_commands(msg)
-    try:
-        if msg.author != testbot.user and msg.content.startswith('$weather'):
-            if len((msg.content.replace('$weather', ''))) >= 1:
-                location = msg.content.replace('$weather ', '')
-                url = f'http://api.openweathermap.org/data/2.5/weather?q={location}&appid={api_key}&units=metric'
-                try:
-                    data = parse_data(json.loads(requests.get(url).content)['main'])
-                    await msg.channel.send(embed=weathermsg(data, location))
-                except KeyError:
-                    await msg.channel.send(embed=error_message(location))
-    except CommandNotFound:
-        pass
+    if msg.author != testbot.user and msg.content.startswith('$weather'):
+        if len((msg.content.replace('$weather ', ''))) >= 1:
+            location = msg.content.replace('$weather ', '')
+            url = f'http://api.openweathermap.org/data/2.5/weather?q={location}&appid={api_key}&units=metric'
+            try:
+                data = parse_data(json.loads(requests.get(url).content)['main'])
+                await msg.channel.send(embed=weathermsg(data, location))
+            except KeyError:
+                await msg.channel.send(embed=error_message(location))
 
 
 @testbot.event

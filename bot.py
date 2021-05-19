@@ -16,6 +16,7 @@ from weatherassets import *
 
 
 testbot = commands.Bot(command_prefix="$")
+startup_extensions = ["Cogsforbot.help", "Cogsforbot.chess"]
 
 filtered_words = ["fuck", "bullshit"]
 
@@ -470,5 +471,14 @@ async def place_error(ctx, error):
         await ctx.send("Please enter the position you'd like to mark")
     if isinstance(error, commands.BadArgument):
         await ctx.send("Please make sure to enter an integer.")
+
+if __name__ == "__main__":  # When script is loaded, this will run
+    testbot.remove_command("help")
+    for extension in startup_extensions:
+        try:
+            testbot.load_extension(extension)  # Loads cogs successfully
+        except Exception as e:
+            exc = '{}: {}'.format(type(e).__name__, e)
+            print('Failed to load extension {}\n{}'.format(extension, exc))  # Failed to load cog, with error
 
 testbot.run(discord_token)

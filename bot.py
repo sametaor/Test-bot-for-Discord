@@ -1,25 +1,24 @@
-from re import IGNORECASE
-from discord.ext.commands.errors import CommandNotFound
-from weatherassets import error_message, parse_data, weathermsg
 import discord
-from discord.ext import commands
 import asyncio
 import json
 import requests
-from discordtoken import discord_token, api_key
 import random
-import praw
+from discord.ext import commands
+from discordtoken import discord_token, api_key
 from texttoowo import text_to_owo
 from redditmeme import reddit
 from tictactoe import winningConditions, player1, player2, turn, gameOver, board
 from weatherassets import *
+from prsaw import RandomStuff
 
 
-testbot = commands.Bot(command_prefix="$")
+testbot = commands.Bot(command_prefix="$", intents=discord.Intents.all())
 
-startup_extensions = ["Cogsforbot.help", "Cogsforbot.chess"]
+startup_extensions = ["Cogsforbot.help", "Cogsforbot.chess", "Cogsforbot.snakegameassets", "Cogsforbot.UrbanDictionary"]
 
 filtered_words = ["fuck", "bullshit"]
+
+rs = RandomStuff(async_mode=True)
 
 @testbot.event
 async def on_ready():
@@ -28,16 +27,34 @@ async def on_ready():
 
 
 @testbot.event
+async def on_member_join(member):
+    channel = discord.utils.get(member.guild.channels, name='welcome')
+    await channel.send(f"Hello there {member.mention}! A warm welcome to you for joining {member.guild.name}!")
+
+
+@testbot.event
+async def on_member_remove(member):
+    channel = discord.utils.get(member.guild.channels, name='goodbye')
+    await channel.send(f"We will miss you, {member.mention}!")
+
+
+@testbot.event
 async def on_message(msg):
+    if testbot.user == msg.author:
+        return
     for word in filtered_words:
         if word in msg.content:
             await msg.delete()
-
+    
+    if msg.channel.name == 'ai-chat':
+        response = await rs.get_ai_response(msg.content)
+        await msg.reply(response)
+    
     await testbot.process_commands(msg)
     if msg.author != testbot.user and msg.content.startswith('$weather'):
         if len((msg.content.replace('$weather ', ''))) >= 1:
             location = msg.content.replace('$weather ', '')
-            url = f'http://api.openweathermap.org/data/2.5/weather?q={location}&appid={api_key}&units=metric'
+            url = 'http://api.openweathermap.org/data/2.5/weather?q=' + location + '&appid=' + api_key + '&units=metric'
             try:
                 data = parse_data(json.loads(requests.get(url).content)['main'])
                 await msg.channel.send(embed=weathermsg(data, location))
@@ -138,30 +155,99 @@ async def unban(ctx,*,member):
     await ctx.send(member + " was not found.")
 
 @testbot.command()
-@commands.has_permissions(kick_members=True)
-async def mute(ctx,member : discord.Member):
-    muted_role = ctx.guild.get_role(839888159977242654)
+@commands.has_permissions(manage_messages=True)
+async def mute(ctx,member : discord.Member, *, reason=None):
+    guild = ctx.guild
+    muted_role = discord.utils.get(guild.roles, name="Muted")
 
-    await member.add_roles(muted_role)
+    if not muted_role:
+        muted_role = await guild.create_role(name="Muted")
 
-    await ctx.send(member.mention + " has been muted.")
+        for channel in guild.channels:
+            await channel.set_permissions(muted_role, speak=False, send_messages=False, stream=False, attach_files=False, mention_everyone=False, external_emojis=False, connect=False, read_messages=False)
+    
+    await member.add_roles(muted_role, reason=reason)
+    await ctx.send(f"{member.mention} has been muted for the following reason: {reason}.")
+    await member.send(f"You were muted in {guild.name} for the following reason: {reason}.")
 
 @testbot.command()
-@commands.has_permissions(kick_members=True)
+@commands.has_permissions(manage_messages=True)
 async def unmute(ctx,member : discord.Member):
-    muted_role = ctx.guild.get_role(839888159977242654)
+    guild = ctx.guild
+    mutedRole = discord.utils.get(ctx.guild.roles, name="Muted")
 
-    await member.remove_roles(muted_role)
-
-    await ctx.send(member.mention + " has been unmuted.")
+    await member.remove_roles(mutedRole)
+    await ctx.send(f"{member.mention} has been unmuted.")
+    await member.send(f"You were unmuted in {guild.name}.")
 
 @testbot.command()
-async def greet(ctx):
-    await ctx.send(f"Hello you beautiful beautiful people, welcome to {ctx.guild.name}!")
+async def tempmute(ctx, member: discord.Member=None, time=None, *, reason=None):
+    if not member:
+        await ctx.send("You must mention a member to mute!")
+    elif not time:
+        await ctx.send("You must mention a time!")
+    else:
+        if not reason:
+            reason="No reason given"
+        #Now timed mute manipulation
+    try:
+        time_interval = time[:-1] #Gets the numbers from the time argument, start to -1
+        duration = time[-1] #Gets the timed manipulation, s, m, h, d
+        if duration == "s":
+            time_interval = time_interval * 1
+        elif duration == "m":
+            time_interval = time_interval * 60
+        elif duration == "h":
+            time_interval = time_interval * 60 * 60
+        elif duration == "d":
+            time_interval = time_interval * 86400
+        else:
+            await ctx.send("Invalid duration input")
+            return
+    except Exception as e:
+        print(e)
+        await ctx.send("Invalid time input")
+        return
+    guild = ctx.guild
+    Muted = discord.utils.get(guild.roles, name="Muted")
+    if not Muted:
+        Muted = await guild.create_role(name="Muted")
+        for channel in guild.channels:
+            await channel.set_permissions(Muted, speak=False, send_messages=False, read_message_history=True, read_messages=False)
+    else:
+        await member.add_roles(Muted, reason=reason)
+        muted_embed = discord.Embed(title="Tempmuted a user", description=f"{member.mention} Was muted for {reason} for {time}", colour=discord.Colour.dark_red())
+        await ctx.send(embed=muted_embed)
+        await asyncio.sleep(int(time_interval))
+        await member.remove_roles(Muted)
+        unmute_embed = discord.Embed(title='Tempmute over!', description=f'{member.mention} has been unmuted for {reason} after {time}', colour=discord.Colour.green())
+        await ctx.send(embed=unmute_embed)
+
+@testbot.command()
+@commands.has_permissions(manage_messages=True)
+async def lockdown(ctx):
+    await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=False)
+    await ctx.send(ctx.channel.mention + "is now set to lockdown mode.")
+
+@testbot.command()
+@commands.has_permissions(manage_messages=True)
+async def unlock(ctx):
+    await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
+    await ctx.send("Lockdown mode is now removed for " + ctx.channel.mention)
+
+@testbot.command()
+async def slowmode(ctx, seconds : int):
+    await ctx.channel.edit(slowmode_delay=seconds)
+    await ctx.send(f"The slowmode is now set to {seconds} seconds.")
+
+@testbot.command(pass_context=True)
+async def nickset(ctx, member : discord.Member, nick):
+    await member.edit(nick=nick)
+    await ctx.send(f"Nickname changed for {member.mention} ")
 
 @testbot.command()
 async def sing(ctx):
-    await ctx.send("She sell seashells on the seashore, but the value of these shells will fall...")
+    await ctx.send("She sells seashells on the seashore, but the value of these shells will fall...")
 
 @testbot.command()
 async def whois(ctx, member : discord.Member):

@@ -9,7 +9,7 @@ from PIL import Image
 
 
 class Chess(commands.Cog, name="Chess"):
-    """Chess commands"""
+    """Play a game of chess right on Discord!"""
 
     def __init__(self, bot):
         self.bot = bot

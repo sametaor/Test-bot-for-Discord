@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-import json
 import time
 import random
 
@@ -38,10 +37,11 @@ game = {
 
 
 class Snakegame(commands.Cog, name = "Snake"):
+    """Play a game of snake right on Discord!"""
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="snek")
+    @commands.command(name="snek", help="Use $snek to start a quick game of snake while avoiding hitting the walls and reaching for food.")
     async def start(self, ctx):
         if game['game']:
             return await ctx.channel.send('A game is already going on.')

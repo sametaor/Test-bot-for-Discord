@@ -5,18 +5,20 @@ import requests
 import random
 from discord.ext import commands, tasks
 from discordtoken import discord_token, api_key
+from discord_components import *
 from texttoowo import text_to_owo
 from redditmeme import reddit
 from itertools import cycle
 from tictactoe import winningConditions, player1, player2, turn, gameOver, board
 from weatherassets import *
 from prsaw import RandomStuff
+from eightballresponses import outputs
 
 
 testbot = commands.Bot(command_prefix="$", intents=discord.Intents.all())
 testbot.remove_command("help")
 
-startup_extensions = ["Cogsforbot.Coghelp", "Cogsforbot.chess", "Cogsforbot.snakegameassets", "Cogsforbot.UrbanDictionary"]
+startup_extensions = ["Cogsforbot.Coghelp", "Cogsforbot.chess", "Cogsforbot.snakegameassets", "Cogsforbot.UrbanDictionary", "Cogsforbot.Wikisearch"]
 
 filtered_words = ["fuck", "bullshit"]
 
@@ -40,6 +42,7 @@ async def status_swap():
 async def on_ready():
     print("Test bot ready to go")
     status_swap.start()
+    DiscordComponents(testbot)
 
 
 @testbot.event
@@ -71,8 +74,10 @@ async def on_message(msg):
             await msg.delete()
     
     if msg.channel.name == 'ai-chat':
-        response = await rs.get_ai_response(msg.content)
-        await msg.reply(response)
+            response = await rs.get_ai_response(msg.content)
+            await msg.reply(response)
+        
+    await testbot.process_commands(msg)   
     
     if msg.author != testbot.user and msg.content.startswith('$weather'):
         if len((msg.content.replace('$weather ', ''))) >= 1:
@@ -95,7 +100,20 @@ async def on_message(msg):
         with open('users.json', 'w') as f:
             json.dump(users, f, indent=4)
     
-    await testbot.process_commands(msg)
+    if msg.content == '$dev':
+        await msg.channel.send(
+            "Button Command Ran!",
+            components =[[
+                Button(style=ButtonStyle.URL, label="See my progress!", url="https://github.com/sametaor/Test-bot-for-Discord/tree/master"),
+                Button(style=ButtonStyle.URL, label="Report issues!", url="https://github.com/sametaor/Test-bot-for-Discord/issues")
+            ]],
+        )
+        res = await testbot.wait_for("button_click")
+        if res.channel == msg.channel:
+            await res.respond(
+                type=InteractionType.ChannelMessageWithSource,
+                content=f'{res.component.label} clicked'
+            )
 
 @testbot.event
 async def on_command_error(ctx,error):
@@ -143,8 +161,9 @@ async def help(ctx):
     em = discord.Embed(title="May I help you?", description="Use $help <command> for detailed info of a command", colour=ctx.author.colour)
     em.add_field(name="Moderation", value = "purge, kick, ban, unban, mute, unmute, tempmute, lockdown, unlock, slowmode, giverole, nickset, whois")
     em.add_field(name="Reddit", value="meme, formuladank, crapmcsuggest, verbose, engrish")
-    em.add_field(name="Fun", value="owofy, guess, rolldice, coinflip, urban, sing")
-    em.add_field(name="Games", value="chess, snek, tictactoe, place, board, end")
+    em.add_field(name="Fun", value="owofy, guess, rolldice, coinflip, sing, 8ball")
+    em.add_field(name="Games", value="tictactoe, place, board, end")
+    em.add_field(name="Additional help:", value="addhelp")
     em.set_footer(icon_url=ctx.author.avatar_url, text=f"Requested by {ctx.author.name}")
     await ctx.send(embed=em)
 
@@ -183,6 +202,27 @@ async def unban(ctx,*,member):
             return
     
     await ctx.send(member + " was not found.")
+
+@testbot.command()
+@commands.has_permissions(manage_messages=True)
+async def warn(ctx, member : discord.Member, *, reason=None):
+    if member is None:
+        await ctx.send('Please provide a member.')
+    elif member == testbot.user:
+        await ctx.send('You cannot warn a bot member.')
+    elif member == ctx.author:
+        await ctx.send('You cannot warn yourself.')
+    else:
+        await ctx.message.delete()
+        try:
+            await member.send(f'You have been warned in {ctx.guild.name} for the following reason: {reason}')
+        except:
+            await ctx.send("Couldn't send warn message because member has their DMs closed")
+        
+        embed = discord.Embed(title="Warn", description=f'{member.mention}', colour = discord.Colour.red())
+        embed.add_field(name="Reason:", value=f'{reason}')
+        embed.add_field(name="Warned by:", value=f'{ctx.author.mention}', inline=True)
+        await ctx.send(embed=embed)
 
 @testbot.command()
 @commands.has_permissions(manage_messages=True)
@@ -273,8 +313,11 @@ async def slowmode(ctx, seconds : int):
 
 @testbot.command(pass_context=True)
 async def nickset(ctx, member : discord.Member, nick):
-    await member.edit(nick=nick)
-    await ctx.send(f"Nickname changed for {member.mention} ")
+    if member == ctx.author:
+        await member.edit(nick=nick)
+        await ctx.send(f"Nickname changed for {member.mention} ")
+    elif member != ctx.author:
+        await ctx.send("You cannot change others' nicknamess without the required permissions. Only mention your own name.")
 
 @testbot.command()
 async def sing(ctx):
@@ -291,6 +334,19 @@ async def whois(ctx, member : discord.Member):
     embed.set_footer(icon_url=ctx.author.avatar_url, text=f"Requested by{ctx.author.name}")
     await ctx.send(embed=embed)
 
+@testbot.command()
+async def avatar(ctx, member : discord.Member = None):
+    if not member:
+        member = ctx.message.author
+    avatar = member.avatar_url
+    embed = discord.Embed(title=member.name, colour=discord.Colour.blue())
+    embed.set_image(url=avatar)
+    embed.set_footer(icon_url=ctx.author.avatar_url, text=f"Requested by {ctx.author.name}")
+    await ctx.send(embed=embed)
+
+@testbot.command(aliases=['8ball'])
+async def eightball(ctx, *, question):
+    await ctx.send(f':8ball: {random.choice(outputs)}')
 @testbot.command(pass_context=True)
 @commands.has_permissions(administrator=True)
 async def giverole(ctx, emoji,role : discord.Role,*,message):
@@ -710,7 +766,7 @@ async def whois(ctx):
 
 @help.command()
 async def meme(ctx):
-    em = discord.Embed(title="meme", description="Sends contentfrom r/memes.")
+    em = discord.Embed(title="meme", description="Sends content from r/memes.")
     em.add_field(name="**Syntax**", value="$meme")
     await ctx.send(embed=em)
 
@@ -778,6 +834,12 @@ async def place(ctx):
 async def board(ctx):
     em = discord.Embed(title="board(related to tictactoe)", description="Used to show the positions on the tictactoe board.")
     em.add_field(name="**Syntax**", value="$board")
+    await ctx.send(embed=em)
+
+@help.command()
+async def eightball(ctx):
+    em = discord.Embed(title="8ball", description="Use this to ask a question and the bot will give a random answer to that.")
+    em.add_field(name="**Syntax**", value="$8ball <question or text>")
     await ctx.send(embed=em)
 
 if __name__ == "__main__":  # When script is loaded, this will run

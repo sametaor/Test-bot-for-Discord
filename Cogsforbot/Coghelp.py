@@ -11,13 +11,13 @@ class Help(commands.Cog, name="Help"):
         self.bot = bot
 
     @commands.command(pass_context=True)
-    async def coghelp(self, ctx, *, category=None):
+    async def addhelp(self, ctx, *, category=None):
         """Gets all category and commands of mine."""
         try:
             if category is None:
                 """Category listing.  What more?"""
                 halp = discord.Embed(title='All command categories',
-                                     description=f'Use `{self.bot.command_prefix}help [category]` to find out more '
+                                     description=f'Use `{self.bot.command_prefix}addhelp [category]` to find out more '
                                                  f'about them. \nSyntax: <needed> [optional]',
                                      color=discord.Color.green())
                 cogs_desc = ''
@@ -30,6 +30,7 @@ class Help(commands.Cog, name="Help"):
                         cmds_desc += ('{} - {}'.format(y.name, y.help) + '\n')
                 # halp.add_field(name='Un-categorized Commands', value=cmds_desc[0:len(cmds_desc) - 1], inline=False)
                 # await ctx.message.add_reaction(emoji='✉')
+                halp.set_footer(icon_url=ctx.author.avatar_url, text=f"Requested by {ctx.author.name}")
                 await ctx.send('', embed=halp)
             else:
                 """Command listing within a category."""

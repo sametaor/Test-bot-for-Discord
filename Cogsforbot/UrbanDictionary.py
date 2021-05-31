@@ -62,7 +62,7 @@ async def search_random_word():
         return data
 
 
-class UrbanDictionaryCog(commands.Cog):
+class Urbandict(commands.Cog):
     """Get definitions of words straight from Urban Dictionary."""
 
     def __init__(self, bot):
@@ -137,4 +137,4 @@ class UrbanDictionaryCog(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(UrbanDictionaryCog(bot))
+    bot.add_cog(Urbandict(bot))

@@ -13,6 +13,7 @@ from tictactoe import winningConditions, player1, player2, turn, gameOver, board
 from weatherassets import *
 from prsaw import RandomStuff
 from eightballresponses import outputs
+from profanity import profanity #pip install profanity==1.1
 
 
 testbot = commands.Bot(command_prefix="$", intents=discord.Intents.all())
@@ -20,7 +21,8 @@ testbot.remove_command("help")
 
 startup_extensions = ["Cogsforbot.Coghelp", "Cogsforbot.chess", "Cogsforbot.snakegameassets", "Cogsforbot.UrbanDictionary", "Cogsforbot.Wikisearch"]
 
-filtered_words = ["fuck", "bullshit"]
+#filtered_words = ["fuck", "bullshit"] -- Maybe something like code or something idk since we already have a profanity library imported
+filtered_words = ['amogus', 'code', 'https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwja7pKq2fnwAhUM8BoKHQLeAUMQwqsBMAB6BAgFEAI&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DdQw4w9WgXcQ&usg=AOvVaw0aHtehaphMhOCAkCydRLZU']
 
 rs = RandomStuff(async_mode=True)
 
@@ -69,8 +71,7 @@ async def on_member_remove(member):
 async def on_message(msg):
     if testbot.user == msg.author:
         return
-    for word in filtered_words:
-        if word in msg.content:
+    if profanity.contains_profanity(word) == True or if word in filtered_words:
             await msg.delete()
     
     if msg.channel.name == 'ai-chat':

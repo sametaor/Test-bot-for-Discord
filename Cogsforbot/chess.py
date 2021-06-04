@@ -27,8 +27,8 @@ def setup(bot):
 async def chess_loop(user1, user2, ctx, bot):
     # Chess loop
     embed = discord.Embed(title=f"A Chess game started!",
-                          description=f"{user1.mention} is whites and {user2.mention} is blacks.",
-                          color=discord.Color.green())
+                        description=f"{user1.mention} is whites and {user2.mention} is blacks.",
+                        color=discord.Color.green())
     await ctx.send(embed=embed)
     # Initiate the board
     board = chess.Board()
@@ -56,8 +56,8 @@ async def chess_loop(user1, user2, ctx, bot):
         if game_over:
             # Check if game is over
             embed = discord.Embed(title=f"Game over!",
-                                  description=f"{user1.mention} won the game! GG",
-                                  color=discord.Color.green())
+                                description=f"{user1.mention} won the game! GG",
+                                color=discord.Color.green())
             await ctx.send(embed=embed)
             return
 
@@ -68,8 +68,8 @@ async def chess_loop(user1, user2, ctx, bot):
             return
         if game_over:
             embed = discord.Embed(title=f"Game over!",
-                                  description=f"{user2.mention} won the game! GG",
-                                  color=discord.Color.green())
+                                description=f"{user2.mention} won the game! GG",
+                                color=discord.Color.green())
             await ctx.send(embed=embed)
             return
 
@@ -86,15 +86,15 @@ async def board_move(player, board, ctx, bot):
             # That awkward moment they leave you on read (You left them speechless!)
             # Basically we want to cancel the game tbf
             embed = discord.Embed(title=f"Game canceled!",
-                                  description=f"{player.mention} took too long to respond.",
-                                  color=discord.Color.red())
+                                description=f"{player.mention} took too long to respond.",
+                                color=discord.Color.red())
             await ctx.send(embed=embed)
             return
         if message.content.lower() == "cancel":
             # If the message was cancel, then cancel...
             embed = discord.Embed(title=f"Game canceled!",
-                                  description=f"{player.mention} canceled the game.",
-                                  color=discord.Color.red())
+                                description=f"{player.mention} canceled the game.",
+                                color=discord.Color.red())
             await ctx.send(embed=embed)
             # Delete their messages to make it a little nicer
             delete_array = [message]
@@ -119,8 +119,8 @@ async def board_move(player, board, ctx, bot):
                     if move in board.legal_moves:
                         # Check if the move was valid
                         embed = discord.Embed(title=f"Move",
-                                              description=f"{player.mention} moved {move_from} to {move_to}!",
-                                              color=discord.Color.green())
+                                            description=f"{player.mention} moved {move_from} to {move_to}!",
+                                            color=discord.Color.green())
                         await ctx.send(embed=embed)
                         # Make the move on the board
                         board.push(move)
@@ -139,8 +139,8 @@ async def board_move(player, board, ctx, bot):
                     else:
                         # If the move wasn't valid
                         embed = discord.Embed(title=f"Illegal Move!",
-                                              description=f"{player.mention}The move you just attempted is not legal. Please try again.",
-                                              color=discord.Color.red())
+                                            description=f"{player.mention}The move you just attempted is not legal. Please try again.",
+                                            color=discord.Color.red())
                         await ctx.send(embed=embed)
                     # Delete the messages to make it a little nicer
                     # This, again, is a copy from above
@@ -155,7 +155,7 @@ async def board_move(player, board, ctx, bot):
             except Exception as e:
                 # If they didnt do the correct syntax
                 embed = discord.Embed(title=f"Syntax Error",
-                                      description=f"You did not use the correct syntax. Please do `piece, new position`",
-                                      color=discord.Color.red())
+                                    description=f"You did not use the correct syntax. Please do `piece, new position`",
+                                    color=discord.Color.red())
                 embed.set_footer(text=e)
                 await ctx.send(embed=embed)

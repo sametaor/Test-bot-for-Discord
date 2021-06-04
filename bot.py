@@ -13,7 +13,7 @@ from tictactoe import winningConditions, player1, player2, turn, gameOver, board
 from weatherassets import *
 from prsaw import RandomStuff
 from eightballresponses import outputs
-from profanity import profanity #pip install profanity==1.1
+from connectfourassets import *
 
 
 testbot = commands.Bot(command_prefix="$", intents=discord.Intents.all())
@@ -21,8 +21,7 @@ testbot.remove_command("help")
 
 startup_extensions = ["Cogsforbot.Coghelp", "Cogsforbot.chess", "Cogsforbot.snakegameassets", "Cogsforbot.UrbanDictionary", "Cogsforbot.Wikisearch"]
 
-#filtered_words = ["fuck", "bullshit"] -- Maybe something like code or something idk since we already have a profanity library imported
-filtered_words = ['amogus', 'code', 'https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwja7pKq2fnwAhUM8BoKHQLeAUMQwqsBMAB6BAgFEAI&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DdQw4w9WgXcQ&usg=AOvVaw0aHtehaphMhOCAkCydRLZU']
+filtered_words = ['fuck', 'bullshit']
 
 rs = RandomStuff(async_mode=True)
 
@@ -71,7 +70,8 @@ async def on_member_remove(member):
 async def on_message(msg):
     if testbot.user == msg.author:
         return
-    if profanity.contains_profanity(word) == True or if word in filtered_words:
+    for word in filtered_words:
+        if word in msg.content:
             await msg.delete()
     
     if msg.channel.name == 'ai-chat':
@@ -536,8 +536,8 @@ async def tictactoe(ctx, p1 : discord.Member, p2 : discord.Member):
         global board
         await ctx.send(embed = discord.Embed(title="To see what each square's number is type $board"))
         board = ["⬜", "⬜", "⬜",
-                 "⬜", "⬜", "⬜",
-                 "⬜", "⬜", "⬜"]
+                "⬜", "⬜", "⬜",
+                "⬜", "⬜", "⬜"]
 
         turn = ""
         gameOver = False
@@ -617,16 +617,16 @@ async def place(ctx, pos : int):
 
 @testbot.command()
 async def end(ctx):
-  global gameOver
-  if not gameOver:
-    gameOver = True
-    await ctx.send("Stopping current game...")
-  else:
-    await ctx.send("⭕There is currently no game running!❌")
+    global gameOver
+    if not gameOver:
+        gameOver = True
+        await ctx.send("Stopping current game...")
+    else:
+        await ctx.send("⭕There is currently no game running!❌")
 
 def tie():
-  global gameOver
-  gameOver = True
+    global gameOver
+    gameOver = True
 
 def checkWinner(winningConditions, mark):
     global gameOver
@@ -636,8 +636,8 @@ def checkWinner(winningConditions, mark):
 
 @testbot.command()
 async def board(ctx):
-  embed = discord.Embed(title="What each square's number is", description = ":one::two::three:\n:four::five::six:\n:seven::eight::nine:")
-  await ctx.send(embed = embed)
+    embed = discord.Embed(title="What each square's number is", description = ":one::two::three:\n:four::five::six:\n:seven::eight::nine:")
+    await ctx.send(embed = embed)
 
 @tictactoe.error
 async def tictactoe_error(ctx, error):
@@ -687,159 +687,414 @@ async def rank(ctx, member : discord.Member):
         lvl = users[str(id)]['level']
         await ctx.send(f'{member} is at level {lvl}!')
 
+@testbot.group(invoke_without_command=True)
+@commands.guild_only()
+@commands.has_guild_permissions(manage_channels=True)
+@commands.bot_has_guild_permissions(manage_channels=True)
+async def new(ctx):
+    await ctx.send("Invalid sub-command passed.")
+
+@new.command()
+@commands.guild_only()
+@commands.has_guild_permissions(manage_channels=True)
+@commands.bot_has_guild_permissions(manage_channels=True)
+async def category(ctx, role: discord.Role, *, name):
+    overwrites = {
+    ctx.guild.default_role: discord.PermissionOverwrite(read_messages=False),
+    ctx.guild.me: discord.PermissionOverwrite(read_messages=True),
+    role: discord.PermissionOverwrite(read_messages=True)
+    }
+    category = await ctx.guild.create_category(name=name, overwrites=overwrites)
+    await ctx.send(f"Hey dude, I made {category.name} for ya!")
+    
+@new.command()
+@commands.guild_only()
+@commands.has_guild_permissions(manage_channels=True)
+@commands.bot_has_guild_permissions(manage_channels=True)
+async def channel(ctx, role: discord.Role, *, name):
+    overwrites = {
+    ctx.guild.default_role: discord.PermissionOverwrite(read_messages=False),
+    ctx.guild.me: discord.PermissionOverwrite(read_messages=True),
+    role: discord.PermissionOverwrite(read_messages=True)
+    }
+    channel = await ctx.guild.create_text_channel(name=name, overwrites=overwrites)
+    await ctx.send(f"Hey dude, I made {channel.name} for ya!")
+
+@testbot.command(aliases=['connect'])
+async def connect4(ctx,p1:discord.Member,p2:discord.Member):
+    global player1
+    global player2
+    global gameOver
+    global turn
+    global modes
+
+    if gameOver:
+        global board
+        global numturn
+        board = [
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0]
+        ]
+        player1 = p1.name
+        player2 = p2.name
+
+        board_render = []
+        count_render = 0
+        num = random.randint(1,2)
+        if num == 1:
+            numturn = 1
+            turn = player1
+        elif num == 2:
+            numturn = 2
+            turn = player2
+        for count, i in enumerate(board):
+            if ([0, 0, 0, 0, 0, 0, 0, 0]== i) and count_render <= 3:
+                count_render +=1
+                board_render.append(i)
+            elif count_render <= 3:
+                board_render.append(i)
+            
+        board_render.reverse()
+        await ctx.send(render(board_render))
+        await ctx.send("{}'s Turn!".format(turn))
+        board_render.reverse()
+        gameOver = False
+    else:
+        await ctx.send("A Connect-4 game is already going on.")
+
+@testbot.command(aliases=['p'])
+async def c4place(ctx,num:int):
+    global player1
+    global player2
+    global gameOver
+    global turn
+    global modes
+
+    if not gameOver:
+        global board
+        global numturn
+
+        counts = 0
+        count_render = 0
+        board_render = []
+        count_tie = 0
+        if turn == ctx.author.name:
+            for count, i in enumerate(board):
+                if ([0, 0, 0, 0, 0, 0, 0, 0]== i) and count_render <= 3:
+                    count_render +=1
+                    board_render.append(i)
+                elif count_render <= 3:
+                    board_render.append(i)
+            for count, i in enumerate(board):
+                if i[num-1] == 0:
+                    counts += 1
+                    board[count][num-1] = numturn
+                    win = windetect(board,turn)
+                    if win:
+                        board_render.reverse()
+                        line = ''
+                        await ctx.send(render(board_render))
+                        gameOver = True
+                            # time.sleep(0.3)
+                        await ctx.send("{} wins!".format(turn))
+                        await ctx.send(":partying_face: Congratulations!")
+                        board_render.reverse()
+                        return
+                    if turn == player1:
+                        numturn= 2
+                        turn = player2
+                    else:
+                        numturn = 1
+                        turn = player1
+                    board_render.reverse()
+                    for i in board:
+                        print(i)
+                    line = ''
+                    await ctx.send(render(board_render))
+                    await ctx.send("{} Turn!".format(turn))
+                    board_render.reverse()
+                    return
+                for y in i:
+                    if y == 0:
+                        count_tie += 1
+                if count_tie == 0:
+                    counts += 1
+                    if modes == 1:
+                        await ctx.send(render(board_render))
+                    elif modes == 2:
+                        await ctx.send(embed=render(board_render))
+                    await ctx.send("Tie!")
+                    return
+        else:
+            await ctx.send("It's not your turn")
+            counts += 1
+        if counts == 0:
+            await ctx.send("That column is full, please select another column.")
+    else:
+        await ctx.send("Please start with $connect4 command.")
+
+def render(board_render):
+    line=''
+    global modes
+    for count,x in enumerate(board_render):
+        for y in x:
+            if y == 0:
+                line += (":white_medium_square:" + ' ')
+            elif y == 1:
+                line += (":red_circle:" + ' ')
+            elif y == 2:
+                line += (":yellow_circle:" + ' ')
+        if count <= len(board_render)-2:
+            line += "\n"
+    return line
+
+
+def windetect(board,turn):
+    global numturn
+    boardHeight = len(board)
+    boardWidth = len(board[0])
+    tile = numturn
+
+    # check horizontal spaces
+    for y in range(boardHeight):
+        for x in range(boardWidth - 3):
+            if board[x][y] == tile and board[x+1][y] == tile and board[x+2][y] == tile and board[x+3][y] == tile:
+                return True
+    
+    # check vertical spaces
+    for x in range(boardWidth):
+        for y in range(boardHeight - 3):
+            if board[x][y] == tile and board[x][y+1] == tile and board[x][y+2] == tile and board[x][y+3] == tile:
+                return True
+    
+    # check / diagonal spaces
+    for x in range(boardWidth - 3):
+        for y in range(3, boardHeight):
+            if board[x][y] == tile and board[x+1][y-1] == tile and board[x+2][y-2] == tile and board[x+3][y-3] == tile:
+                return True
+
+    # check \ diagonal spaces
+    for x in range(boardWidth - 3):
+        for y in range(boardHeight - 3):
+            if board[x][y] == tile and board[x+1][y+1] == tile and board[x+2][y+2] == tile and board[x+3][y+3] == tile:
+                return True
+    return False   
+
+@testbot.command()
+async def c4stop(ctx):
+    global gameOver
+    if not gameOver:
+        gameOver = True
+        await ctx.send("The game has been stopped.")
+    else:
+        await ctx.send("The Game has ended.")
+
+@testbot.command()
+async def c4mode(ctx,mode):
+    global modes
+    if mode == '1':
+        modes = 1
+        await ctx.send("Changed to mode 1.")
+    if mode == '2':
+        modes = 2
+        await ctx.send("Changed to mode 2.")
+
+@c4mode.error
+async def mode_error(ctx,error):
+    global modes
+    text = "Mode:\n    1. Play in 1 device\n    2. Play with your friend\nCurrent: {}".format(modes)
+    if isinstance(error,commands.MissingRequiredArgument):
+        await ctx.send(text)
+
+@help.command()
+async def new(ctx):
+    em = discord.Embed(title="New", description="Use this command to add a new channel with a specified name and role or member permission.", colour=discord.Colour.green())
+    em.add_field(name="**Syntax**", value="$new <channel or category> <@role or @member> <name of channel or category>")
+    await ctx.send(embed=em)
+
+@help.command()
+async def connect4(ctx):
+    em = discord.Embed(title="Connect-4", description="Starts a game of Connect-4 with a mentioned member.", colour=discord.Colour.green())
+    em.add_field(name="**Syntax**", value="$connect4 <@player1> <@player2>")
+    await ctx.send(embed=em)
+
+@help.command()
+async def c4place(ctx):
+    em = discord.Embed(title="Place", description="Use this to place a dot in a connect 4 board.", colour=discord.Colour.green())
+    em.add_field(name="**Syntax**", value="$c4place <column>")
+    await ctx.send(embed=em)
+
+@help.command()
+async def c4stop(ctx):
+    em = discord.Embed(title="Stop", description="Use this to stop a Connect-4 game.", colour=discord.Colour.green())
+    em.add_field(name="**Syntax**", value="$c4stop")
+    await ctx.send(embed=em)
+
+@help.command()
+async def c4mode(ctx):
+    em = discord.Embed(title="Mode", description="Use this to change your mode from singeplayer to multiplayer for Connect-4", colour=discord.Colour.green())
+    em.add_field(name="**Syntax**", value="$c4mode <Put either mode 1 or 2>")
+    await ctx.send(embed=em)
+
 @help.command()
 async def purge(ctx):
-    em = discord.Embed(title="purge", description="Clears the last sent msgs in a channel.")
+    em = discord.Embed(title="purge", description="Clears the last sent msgs in a channel.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$purge <number of msgs to be deleted>")
     await ctx.send(embed=em)
 
 @help.command()
 async def kick(ctx):
-    em = discord.Embed(title="kick", description="Kicks the specified member out of a server.")
+    em = discord.Embed(title="kick", description="Kicks the specified member out of a server.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$kick <@member> <reason>")
     await ctx.send(embed=em)
 
 @help.command()
 async def ban(ctx):
-    em = discord.Embed(title="ban", description="Bans the specified member from a server.")
+    em = discord.Embed(title="ban", description="Bans the specified member from a server.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$ban <@member> <reason>")
     await ctx.send(embed=em)
 
 @help.command()
 async def unban(ctx):
-    em = discord.Embed(title="unban", description="Unbans a user from a server.")
+    em = discord.Embed(title="unban", description="Unbans a user from a server.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$unban <username> ")
     await ctx.send(embed=em)
 
 @help.command()
 async def mute(ctx):
-    em = discord.Embed(title="mute", description="Mutes the specified member in a server.")
+    em = discord.Embed(title="mute", description="Mutes the specified member in a server.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$mute <@member> <reason>")
     await ctx.send(embed=em)
 
 @help.command()
 async def unmute(ctx):
-    em = discord.Embed(title="unmute", description="Unmutes the specified member in a server.")
+    em = discord.Embed(title="unmute", description="Unmutes the specified member in a server.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$unmute <@member>")
     await ctx.send(embed=em)
 
 @help.command()
 async def tempmute(ctx):
-    em = discord.Embed(title="tempmute", description="Temporarily mutes the specified member for a specified amount of time in a server.")
+    em = discord.Embed(title="tempmute", description="Temporarily mutes the specified member for a specified amount of time in a server.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$tempmute <@member> <time> <reason>")
     await ctx.send(embed=em)
 
 @help.command()
 async def lockdown(ctx):
-    em = discord.Embed(title="lockdown", description="Locks the specified channel to stop members from messaging.")
+    em = discord.Embed(title="lockdown", description="Locks the specified channel to stop members from messaging.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$lockdown")
     await ctx.send(embed=em)
 
 @help.command()
 async def unlock(ctx):
-    em = discord.Embed(title="unlock", description="Unlocks the specified channel to allow members to send messages.")
+    em = discord.Embed(title="unlock", description="Unlocks the specified channel to allow members to send messages.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$unlock")
     await ctx.send(embed=em)
 
 @help.command()
 async def slowmode(ctx):
-    em = discord.Embed(title="slowmode", description="Applies a specified amount of slowmode in the specified channel.")
+    em = discord.Embed(title="slowmode", description="Applies a specified amount of slowmode in the specified channel.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$slowmode <time in seconds>")
     await ctx.send(embed=em)
 
 @help.command()
 async def nickset(ctx):
-    em = discord.Embed(title="nickset", description="Lets one set a custom nickname in the server.")
+    em = discord.Embed(title="nickset", description="Lets one set a custom nickname in the server.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$nickset <@member> <preferred nickname>")
     await ctx.send(embed=em)
 
 @help.command()
 async def sing(ctx):
-    em = discord.Embed(title="sing", description="Makes the bot sing a line off of the song Money Game Part2 by Ren.")
+    em = discord.Embed(title="sing", description="Makes the bot sing a line off of the song Money Game Part2 by Ren.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$sing")
     await ctx.send(embed=em)
 
 @help.command()
 async def whois(ctx):
-    em = discord.Embed(title="whois", description="Lets one view the user info of the specified user.")
+    em = discord.Embed(title="whois", description="Lets one view the user info of the specified user.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$whois <@member>")
     await ctx.send(embed=em)
 
 @help.command()
 async def meme(ctx):
-    em = discord.Embed(title="meme", description="Sends content from r/memes.")
+    em = discord.Embed(title="meme", description="Sends content from r/memes.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$meme")
     await ctx.send(embed=em)
 
 @help.command()
 async def formuladank(ctx):
-    em = discord.Embed(title="formuladank", description="Sends content from r/formuladank.")
+    em = discord.Embed(title="formuladank", description="Sends content from r/formuladank.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$formuladank")
     await ctx.send(embed=em)
 
 @help.command()
 async def crapmcsuggest(ctx):
-    em = discord.Embed(title="crapmcsuggest", description="Sends content from r/shittymcsuggestions.")
+    em = discord.Embed(title="crapmcsuggest", description="Sends content from r/shittymcsuggestions.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$crapmcsuggest")
     await ctx.send(embed=em)
 
 @help.command()
 async def verbose(ctx):
-    em = discord.Embed(title="verbose", description="Sends content from r/IncreasinglyVerbose.")
+    em = discord.Embed(title="verbose", description="Sends content from r/IncreasinglyVerbose.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$verbose")
     await ctx.send(embed=em)
 
 @help.command()
 async def engrish(ctx):
-    em = discord.Embed(title="engrish", description="Sends content from r/engrish.")
+    em = discord.Embed(title="engrish", description="Sends content from r/engrish.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$engrish")
     await ctx.send(embed=em)
 
 @help.command()
 async def owofy(ctx):
-    em = discord.Embed(title="purge", description="Decorates the specified text with cursed OwOs.")
+    em = discord.Embed(title="purge", description="Decorates the specified text with cursed OwOs.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$owofy <text>")
     await ctx.send(embed=em)
 
 @help.command()
 async def guess(ctx):
-    em = discord.Embed(title="guess", description="Starts a guessing game with three turns.")
+    em = discord.Embed(title="guess", description="Starts a guessing game with three turns.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$guess")
     await ctx.send(embed=em)
 
 @help.command()
 async def rolldice(ctx):
-    em = discord.Embed(title="rolldice", description="Gives a random face of a dice.")
+    em = discord.Embed(title="rolldice", description="Gives a random face of a dice.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$rolldice")
     await ctx.send(embed=em)
 
 @help.command()
 async def coinflip(ctx):
-    em = discord.Embed(title="coinflip", description="Gives either Heads or Tails face of a coin.")
+    em = discord.Embed(title="coinflip", description="Gives either Heads or Tails face of a coin.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$coinflip")
     await ctx.send(embed=em)
 
 @help.command()
 async def tictactoe(ctx):
-    em = discord.Embed(title="tictactoe", description="Starts a match of tictactoe with another mentioned member.")
+    em = discord.Embed(title="tictactoe", description="Starts a match of tictactoe with another mentioned member.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$tictactoe <@member1> <@member2>")
     await ctx.send(embed=em)
 
 @help.command()
 async def place(ctx):
-    em = discord.Embed(title="place(related to tictactoe)", description="Used to define positions for either a ❌ or a ⭕.")
+    em = discord.Embed(title="place(related to tictactoe)", description="Used to define positions for either a ❌ or a ⭕.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$place <position>")
     await ctx.send(embed=em)
 
 @help.command()
 async def board(ctx):
-    em = discord.Embed(title="board(related to tictactoe)", description="Used to show the positions on the tictactoe board.")
+    em = discord.Embed(title="board(related to tictactoe)", description="Used to show the positions on the tictactoe board.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$board")
     await ctx.send(embed=em)
 
 @help.command()
 async def eightball(ctx):
-    em = discord.Embed(title="8ball", description="Use this to ask a question and the bot will give a random answer to that.")
+    em = discord.Embed(title="8ball", description="Use this to ask a question and the bot will give a random answer to that.", colour=discord.Colour.green())
     em.add_field(name="**Syntax**", value="$8ball <question or text>")
     await ctx.send(embed=em)
 

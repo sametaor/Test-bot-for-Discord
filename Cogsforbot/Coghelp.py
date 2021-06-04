@@ -17,9 +17,9 @@ class Help(commands.Cog, name="Help"):
             if category is None:
                 """Category listing.  What more?"""
                 halp = discord.Embed(title='All command categories',
-                                     description=f'Use `{self.bot.command_prefix}addhelp [category]` to find out more '
-                                                 f'about them. \nSyntax: <needed> [optional]',
-                                     color=discord.Color.green())
+                                    description=f'Use `{self.bot.command_prefix}addhelp [category]` to find out more '
+                                                f'about them. \nSyntax: <needed> [optional]',
+                                    color=discord.Color.green())
                 cogs_desc = ''
                 for x in self.bot.cogs:
                     cogs_desc += ('**{}** - {}'.format(x, self.bot.cogs[x].__doc__) + '\n')
@@ -39,8 +39,8 @@ class Help(commands.Cog, name="Help"):
                     category = category.title()
                     if x == category:
                         halp = discord.Embed(title=category + ' Command Listing',
-                                             description=self.bot.cogs[category].__doc__,
-                                             color=discord.Color.green())
+                                            description=self.bot.cogs[category].__doc__,
+                                            color=discord.Color.green())
                         for c in self.bot.get_cog(category).get_commands():
                             if not c.hidden:
                                 params = []
@@ -51,13 +51,13 @@ class Help(commands.Cog, name="Help"):
                                     else:
                                         params.append(f"<{str(paramsDict[i][0])}>")
                                 halp.add_field(name=f"Command: `{self.bot.command_prefix}{c.name} {' '.join(params)}`",
-                                               value=f"{c.help}",
-                                               inline=False)
+                                            value=f"{c.help}",
+                                            inline=False)
                         found = True
                 if not found:
                     """Reminds you if that category doesn't exist."""
                     halp = discord.Embed(title='Error!', description='How do you even use "' + category + '"?',
-                                         color=discord.Color.red())
+                                        color=discord.Color.red())
                 else:
                     # await ctx.message.add_reaction(emoji='✉')
                     pass

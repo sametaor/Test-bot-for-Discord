@@ -24,8 +24,8 @@ def add_field_to_embed(embed: discord.Embed,
         value = "..."
 
     value = (value[:MAX_EMBED_VALUE_LENGTH - 3] + "..."
-             if len(value) > MAX_EMBED_VALUE_LENGTH
-             else value)
+            if len(value) > MAX_EMBED_VALUE_LENGTH
+            else value)
     embed.add_field(name=name, value=value)
 
 
@@ -121,8 +121,8 @@ class Urbandict(commands.Cog):
 
     # Parse the searched word and display here
     @commands.command(name='urban',
-                      help='use $urban <term> to search for a word.'
-                      + 'You can also use $urban to search for a random word')
+                    help='use $urban <term> to search for a word.'
+                    + 'You can also use $urban to search for a random word')
     async def search_dictionary(self, ctx, *, query=None):
         if query is None:
             definition_list = json.loads(

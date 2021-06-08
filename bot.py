@@ -14,14 +14,13 @@ from weatherassets import *
 from prsaw import RandomStuff
 from eightballresponses import outputs
 from connectfourassets import *
+from profanitylist import *
 
 
 testbot = commands.Bot(command_prefix="$", intents=discord.Intents.all())
 testbot.remove_command("help")
 
 startup_extensions = ["Cogsforbot.Coghelp", "Cogsforbot.chess", "Cogsforbot.snakegameassets", "Cogsforbot.UrbanDictionary", "Cogsforbot.Wikisearch"]
-
-filtered_words = ['fuck', 'bullshit']
 
 rs = RandomStuff(async_mode=True)
 
@@ -73,6 +72,7 @@ async def on_message(msg):
     for word in filtered_words:
         if word in msg.content:
             await msg.delete()
+            await msg.channel.send(f'Please mind your language, {msg.author.mention}')
     
     if msg.channel.name == 'ai-chat':
             response = await rs.get_ai_response(msg.content)

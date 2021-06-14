@@ -115,8 +115,7 @@ class Urbandict(commands.Cog):
                     'reaction_add', check=check_reaction, timeout=120.0)
                 counter = (counter + 1) % len(definitions)
             except asyncio.TimeoutError:
-                await message.delete()
-                break
+                pass
             await reaction.remove(user)
 
     # Parse the searched word and display here

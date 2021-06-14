@@ -100,21 +100,6 @@ async def on_message(msg):
 
         with open('users.json', 'w') as f:
             json.dump(users, f, indent=4)
-    
-    if msg.content == '$dev':
-        await msg.channel.send(
-            "Button Command Ran!",
-            components =[[
-                Button(style=ButtonStyle.URL, label="See my progress!", url="https://github.com/sametaor/Test-bot-for-Discord/tree/master"),
-                Button(style=ButtonStyle.URL, label="Report issues!", url="https://github.com/sametaor/Test-bot-for-Discord/issues")
-            ]],
-        )
-        res = await testbot.wait_for("button_click")
-        if res.channel == msg.channel:
-            await res.respond(
-                type=InteractionType.ChannelMessageWithSource,
-                content=f'{res.component.label} clicked'
-            )
 
 @testbot.event
 async def on_command_error(ctx,error):
@@ -141,7 +126,7 @@ async def on_raw_reaction_add(payload):
             data = json.load(react_file)
             for x in data:
                 if str(x['emoji']) == payload.emoji.name:
-                    role = discord.utils.get(testbot.get_guild(payload.guild_id).roles, id=x['role_id'])
+                    role = discord.utils.get(testbot.get_guild(payload.guild_id).roles, name=x['role_name'])
 
                     await payload.member.add_roles(role)
 
@@ -152,7 +137,7 @@ async def on_raw_reaction_remove(payload):
         data = json.load(react_file)
         for x in data:
             if str(x['emoji']) == payload.emoji.name:
-                role = discord.utils.get(testbot.get_guild(payload.guild_id).roles, id=x['role_id'])
+                role = discord.utils.get(testbot.get_guild(payload.guild_id).roles, name=x['role_name'])
 
                 await testbot.get_guild(payload.guild_id).get_member(payload.user_id).remove_roles(role)
 
@@ -168,6 +153,19 @@ async def help(ctx):
     em.set_footer(icon_url=ctx.author.avatar_url, text=f"Requested by {ctx.author.name}")
     await ctx.send(embed=em)
 
+@testbot.command()
+async def dev(ctx):
+    await ctx.send(
+        "Connect to the dev!",
+        components = [[
+            Button(style=ButtonStyle.URL, label='See my progress!', url="https://github.com/sametaor/Test-bot-for-Discord", emoji=discord.PartialEmoji(name='cogemoji', id=676712738835136532, animated=True)),
+            Button(style=ButtonStyle.URL, label='Report issues!', url="https://github.com/sametaor/Test-bot-for-Discord/issues", emoji=discord.PartialEmoji(name='Exclamationsign', id='824380489313943593', animated=False)),
+        ]]
+    )
+
+@testbot.command()
+async def calculator(ctx):
+    await ctx.send()
 @testbot.command()
 @commands.has_permissions(manage_messages=True)
 async def purge(ctx, amount=2):
@@ -313,12 +311,10 @@ async def slowmode(ctx, seconds : int):
     await ctx.send(f"The slowmode is now set to {seconds} seconds.")
 
 @testbot.command(pass_context=True)
+@commands.has_permissions(manage_nicknames=True)
 async def nickset(ctx, member : discord.Member, nick):
-    if member == ctx.author:
         await member.edit(nick=nick)
         await ctx.send(f"Nickname changed for {member.mention} ")
-    elif member != ctx.author:
-        await ctx.send("You cannot change others' nicknamess without the required permissions. Only mention your own name.")
 
 @testbot.command()
 async def sing(ctx):
@@ -348,15 +344,16 @@ async def avatar(ctx, member : discord.Member = None):
 @testbot.command(aliases=['8ball'])
 async def eightball(ctx, *, question):
     await ctx.send(f':8ball: {random.choice(outputs)}')
+
 @testbot.command(pass_context=True)
-@commands.has_permissions(administrator=True)
-async def giverole(ctx, emoji,role : discord.Role,*,message):
-    embed = discord.Embed(description=message)
-    rolemsg = await ctx.channel.send(embed=embed)
+@commands.has_permissions(manage_roles=True)
+async def giverole(ctx, emoji, role : discord.Role,*,rolemessage):
+    emb = discord.Embed(title='Reaction role!', description=rolemessage, colour = discord.Colour.magenta())
+    rolemsg = await ctx.channel.send(embed=emb)
     await rolemsg.add_reaction(emoji)
 
-    with open('giverole.json') as json_file:
-        data = json.load(json_file)
+    with open('giverole.json') as f:
+        data = json.load(f)
 
         new_react_role = {
             'role_name' : role.name,

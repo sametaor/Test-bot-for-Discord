@@ -16,7 +16,7 @@ class Wikipedia(commands.Cog):
         self.bot = bot
     
 
-    @commands.command(name='wiki', help='use $wiki <term> to easily get detailed information about any topic you like.')
+    @commands.command(name='wiki', help='use &wiki <term> to easily get detailed information about any topic you like.')
     async def wiki_search(self, ctx, *args):
         wiki_wiki = wikipediaapi.Wikipedia('en')
 
@@ -36,12 +36,8 @@ class Wikipedia(commands.Cog):
 
         print("Page - Summary: %s" % page_py.summary[0:60])
             # Page - Summary: Python is a widely used high-level programming language for
-        embed = discord.Embed(
-        title =page_py.title ,
-        description = page_py.summary[0:2000],
-        colour = discord.Colour.lighter_grey()
-        )
-        await ctx.send(embed=embed)
+        wikiembed = discord.Embed(title =page_py.title, description = page_py.summary[0:2000], colour = discord.Colour.lighter_grey())
+        await ctx.send(embed=wikiembed)
 
 def setup(bot):
     bot.add_cog(Wikipedia(bot))

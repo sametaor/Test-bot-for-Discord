@@ -21,9 +21,12 @@ def weathermsg(data, location):
         weathermessage.add_field(name=key_features[key], value=data[key], inline=True)
     
     weathermessage.set_footer(icon_url="https://pbs.twimg.com/profile_images/1173919481082580992/f95OeyEW_400x400.jpg", text = "Powered by openweathermap.org")
+    weathermessage.set_thumbnail(url="https://icons.iconarchive.com/icons/papirus-team/papirus-apps/128/weather-icon.png")
     
     return weathermessage
 
-def error_message(location):
-    location = location.title
-    return discord.Embed(title='Error', description=f'There was an error retrieving weather data for {location}.', colour=discord.Colour.red())
+def error_message():
+    weathererror =  discord.Embed(title='Location Error', description='There was an error retrieving weather data for that location.', colour=discord.Colour.red())
+    weathererror.set_thumbnail(url="https://cdn0.iconfinder.com/data/icons/kenline/100/12-512.png")
+    weathererror.set_footer(icon_url="https://pbs.twimg.com/profile_images/1173919481082580992/f95OeyEW_400x400.jpg", text = "Powered by openweathermap.org")
+    return weathererror

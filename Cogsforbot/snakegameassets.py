@@ -41,7 +41,7 @@ class Snakegame(commands.Cog, name = "Snake"):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="snek", help="Use $snek to start a quick game of snake while avoiding hitting the walls and reaching for food.")
+    @commands.command(name="snek", help="Use &snek to start a quick game of snake while avoiding hitting the walls and reaching for food.")
     async def start(self, ctx):
         if game['game']:
             return await ctx.channel.send('A game is already going on.')

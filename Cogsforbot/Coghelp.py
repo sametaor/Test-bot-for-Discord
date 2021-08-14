@@ -19,7 +19,7 @@ class Help(commands.Cog, name="Help"):
                 halp = discord.Embed(title='All command categories',
                                     description=f'Use `{self.bot.command_prefix}addhelp [category]` to find out more '
                                                 f'about them. \nSyntax: <needed> [optional]',
-                                    color=discord.Color.green())
+                                    color=ctx.author.color)
                 cogs_desc = ''
                 for x in self.bot.cogs:
                     cogs_desc += ('**{}** - {}'.format(x, self.bot.cogs[x].__doc__) + '\n')
@@ -31,6 +31,7 @@ class Help(commands.Cog, name="Help"):
                 # halp.add_field(name='Un-categorized Commands', value=cmds_desc[0:len(cmds_desc) - 1], inline=False)
                 # await ctx.message.add_reaction(emoji='✉')
                 halp.set_footer(icon_url=ctx.author.avatar_url, text=f"Requested by {ctx.author.name}")
+                halp.set_thumbnail(url="https://www.pngkit.com/png/full/947-9471761_add-new-questions-add-question-icon-png.png")
                 await ctx.send('', embed=halp)
             else:
                 """Command listing within a category."""
@@ -40,7 +41,7 @@ class Help(commands.Cog, name="Help"):
                     if x == category:
                         halp = discord.Embed(title=category + ' Command Listing',
                                             description=self.bot.cogs[category].__doc__,
-                                            color=discord.Color.green())
+                                            color=ctx.author.color)
                         for c in self.bot.get_cog(category).get_commands():
                             if not c.hidden:
                                 params = []

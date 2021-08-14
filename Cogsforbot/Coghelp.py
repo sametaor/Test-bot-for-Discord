@@ -16,10 +16,10 @@ class Help(commands.Cog, name="Help"):
         try:
             if category is None:
                 """Category listing.  What more?"""
-                halp = discord.Embed(title='All command categories',
-                                    description=f'Use `{self.bot.command_prefix}addhelp [category]` to find out more '
-                                                f'about them. \nSyntax: <needed> [optional]',
-                                    color=ctx.author.color)
+                halp = discord.Embed(title='Additional command categories',
+                                     description=f'Use `{self.bot.command_prefix}addhelp [category]` to find out more '
+                                                 f'about them. \nSyntax: <needed> [optional]',
+                                     color=discord.Color.green())
                 cogs_desc = ''
                 for x in self.bot.cogs:
                     cogs_desc += ('**{}** - {}'.format(x, self.bot.cogs[x].__doc__) + '\n')

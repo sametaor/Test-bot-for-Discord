@@ -1,24 +1,25 @@
 import discord
 import asyncio
+import aiohttp
 import json
+import os
 from discord.channel import VoiceChannel
 from discord.enums import ChannelType
+from prsaw.PRSAW import RandomStuffV4
+from dotenv import load_dotenv
 import requests
 import random
 import datetime
-import profanity
-from discord import Member, Spotify, Guild
+from discord import Member
 from typing import Optional
 from discord.ext import commands, tasks
-from better_profanity import profanity
-from discordtoken import discord_token, api_key
+from discordsecrets import api_key, ai_api_key
 from discord_components import *
 from texttoowo import text_to_owo
 from redditmeme import reddit
 from itertools import cycle
 from tictactoe import winningConditions, player1, player2, turn, gameOver, board
 from weatherassets import *
-from prsaw import RandomStuffV2
 from eightballresponses import outputs
 from connectfourassets import *
 
@@ -28,9 +29,9 @@ testbot.remove_command("help")
 
 startup_extensions = ["Cogsforbot.Coghelp", "Cogsforbot.chess", "Cogsforbot.snakegameassets", "Cogsforbot.UrbanDictionary", "Cogsforbot.Wikisearch"]
 
-rs = RandomStuffV2(async_mode=True)
+rs = RandomStuffV4(async_mode=True, api_key=ai_api_key)
 
-profanity.load_censor_words_from_file("profanity.txt")
+load_dotenv('token.env')
 
 status = cycle([
     'discord.py',
@@ -118,7 +119,7 @@ def calculator(exp):
         result = 'An error occured'
     return result
 
-@tasks.loop(seconds=5)
+@tasks.loop(seconds=10)
 async def status_swap():
     await testbot.change_presence(activity=discord.Game(next(status)))
 
@@ -144,20 +145,20 @@ async def on_member_remove(member):
 
 @testbot.event
 async def on_message(msg):
+    message = msg.content
+    key = ai_api_key
+    header = {"x-api-key": key}
+    type = "stable"
+    params = {'type':type , 'message':message}
     if testbot.user == msg.author:
         return
     
     if not msg.author.bot:
-        if profanity.contains_profanity(msg.content):
-            await msg.delete()
-            profane_msg = f"Please refrain from using that word, {msg.author.mention}"
-            profanitymsg = await msg.channel.send(profane_msg)
-            await asyncio.sleep(10)
-            await profanitymsg.delete()
-            
-    if msg.channel.name == 'ai-chat':
-        response = await rs.get_ai_response(msg.content)
-        await msg.reply(str(response)[13:-2])
+        if msg.channel.name == 'ai-chat':
+            async with aiohttp.ClientSession(headers=header) as session:
+                async with session.get(url='https://api.pgamerx.com/v3/ai/response', params=params) as resp:
+                    text = await resp.json()
+                    await msg.reply(text[0]['message'])
         
     await testbot.process_commands(msg)   
     
@@ -171,36 +172,28 @@ async def on_message(msg):
             except KeyError:
                 await msg.channel.send(embed=error_message())
     
+    for file in msg.attachments:
+        if file.filename.endswith((".exe", ".dll")):
+            await msg.delete()
+            await msg.channel.send("No .exe or .dll files allowed!")
+    
     if msg.author != testbot.user and "fax" in msg.content:
         await msg.add_reaction(emoji="📠")
     
-    if msg.author != testbot.user and "hmm" in msg.content:
+    if msg.author != testbot.user and "hmm" in msg.content or "Hmm" in msg.content:
         await msg.add_reaction(emoji="🤔")
     
-    if msg.author != testbot.user and "Hmm" in msg.content:
-        await msg.add_reaction(emoji="🤔")
-    
-    if msg.author != testbot.user and "ok and?" in msg.content:
+    if msg.author != testbot.user and "ok and?" in msg.content or "Ok and?" in msg.content:
         await msg.reply("I forgor 💀....Wait! I rember 😀")
     
-    if msg.author != testbot.user and "I forgor" in msg.content:
+    if msg.author != testbot.user and "I forgor" in msg.content or "I Forgor" in msg.content:
         await msg.add_reaction(emoji="💀")
     
-    if msg.author != testbot.user and "I rember" in msg.content:
+    if msg.author != testbot.user and "I rember" in msg.content or "I Rember" in msg.content:
         await msg.add_reaction(emoji="😀")
     
-    if msg.author != testbot.user and "dead chat" in msg.content:
+    if msg.author != testbot.user and "dead chat" in msg.content or "Dead chat" in msg.content:
         await msg.reply("Howdy 🤠")
-    
-    if msg.author != testbot.user and "joe mama" in msg.content:
-        await msg.add_reaction(emoji=discord.PartialEmoji(name="Pog~1", id=872344867882287124, animated=False))
-    
-    if msg.author != testbot.user and "amogus" in msg.content:
-        await msg.add_reaction(emoji=discord.PartialEmoji(name="amogus~2", id=872508785455943781, animated=False))
-    
-    if msg.author != testbot.user and "sus" in msg.content:
-        await msg.add_reaction(emoji=discord.PartialEmoji(name="sus~2", id=872509350730694666, animated=False))
-        await msg.reply("https://tenor.com/view/bruh-when-rock-dwayne-sus-gif-22095949")
     
     if msg.author != testbot.user and "Get it?" in msg.content:
         await msg.reply("https://tenor.com/view/ba-dum-tsss-drum-band-gif-7320811")
@@ -208,13 +201,13 @@ async def on_message(msg):
     if msg.author != testbot.user and "mistake" in msg.content:
         await msg.reply("https://tenor.com/view/bobross-art-gif-4621523")
     
-    if msg.author != testbot.user and "XD" in msg.content:
+    if msg.author != testbot.user and msg.content == "XD" or msg.content == "xD":
         await msg.reply("https://tenor.com/view/muta-laugh-gif-18813278")
     
-    if msg.author != testbot.user and msg.content == "h":
+    if msg.author != testbot.user and msg.content == "h" or msg.content == "H":
         await msg.reply("https://tenor.com/view/h-apple-apple-h-apple-gif-18834689")
     
-    if msg.author != testbot.user and "hello there" in msg.content:
+    if msg.author != testbot.user and msg.content == "hello there" or msg.content == "Hello there":
         await msg.reply("https://tenor.com/view/hello-there-general-kenobi-star-wars-grevious-gif-17774326")
 
 
@@ -270,7 +263,6 @@ async def on_raw_reaction_remove(payload):
             if x['emoji'] == payload.emoji.name and x['message_id'] == payload.message_id:
                 role = discord.utils.get(testbot.get_guild(payload.guild_id).roles, id=x['role_id'])
 
-                
                 await testbot.get_guild(payload.guild_id).get_member(payload.user_id).remove_roles(role)
 
 
@@ -335,16 +327,7 @@ async def calc(ctx):
             f.set_footer(icon_url=ctx.author.avatar_url, text=f"Requested by {ctx.author.name}")
             await res.respond(content='', embed=f, components=buttons, type=7)
 #all credits for the calculator command go to Glowstikk and elektron-blip, do credit them if you wanna publish your code with this command
-    
-@testbot.command()
-async def selection(ctx):
-    await ctx.send('This is a select feature ;)',
-                    components = [
-                        Select(placeholder='Select something from here', options=[SelectOption(label='Burger King Foot Lettuce', value='Number 15',), SelectOption(label='muffin-like hamster', value='muffinhamster')])
-                                ]
-                            )
-    interaction1 = await testbot.wait_for("select_option", check=lambda i:i.component[0].value=='Number 15')
-    await interaction1.respond(content=f'You clicked on Number 15', ephemeral=False)
+
 
 @testbot.command(aliases=["clear", "delete"])
 @commands.has_permissions(manage_messages=True)
@@ -523,12 +506,11 @@ async def ping(ctx):
 
 @testbot.command(aliases=["whois", "ui", "memberinfo", "user", "member"])
 async def userinfo(ctx, target : Optional[Member]):
-    target = target or ctx.author
+    target = target or ctx.author or discord.User
     if target == testbot.user:
         await ctx.send('Please use "&botinfo" to know more about me 🙂!')
     else:
-        embed = discord.Embed(title=target, description=target.mention, colour = target.colour, timestamp=datetime.datetime.utcnow())
-        embed.add_field(name=f"__{discord.PartialEmoji(name='IDcard', id=868046662306770985, animated=False)} ID: __", value=target.id, inline=False)
+        embed = discord.Embed(title=target, description=f"{target.mention} | **__{discord.PartialEmoji(name='IDcard', id=868046662306770985, animated=False)} ID: __** {target.id}", colour = target.colour, timestamp=datetime.datetime.utcnow())
         embed.add_field(name=f"__{discord.PartialEmoji(name='Top_Role', id=869212283941834764, animated=False)} Top role: __", value=target.top_role.mention, inline=True)
         embed.add_field(name=f"__{discord.PartialEmoji(name='Humanbot', id=869219560488829008, animated=False)} Bot: __", value = bool(target.bot), inline=True)
         embed.add_field(name=f"__{discord.PartialEmoji(name='Booster', id=869228744462708856, animated=False)} Booster: __", value=bool(target.premium_since), inline=True)
@@ -539,7 +521,7 @@ async def userinfo(ctx, target : Optional[Member]):
         embed.add_field(name=f"__{discord.PartialEmoji(name='Nickname', id=869227972496871466, animated=False)} Nickname: __", value=target.nick, inline=True)
         embed.add_field(name=f"__{discord.PartialEmoji(name='Roles', id=869214008077602856, animated=False)} Roles({len(target.roles)}): __",value='|'.join(role.mention for role in target.roles), inline=False)
         embed.add_field(name=f"__{discord.PartialEmoji(name='UserPerms', id=871662256709062676, animated=False)} Permissions: __", value=', '.join(f"{(perm[0])}".title() for perm in target.guild_permissions if perm[1]).replace("_", " "), inline=True)
-        embed.add_field(name=f"__{discord.PartialEmoji(name='Badge', id=875656242855559199, animated=False)} Badges: __", value='\n'.join((((((((((((((((((((((((((f'{x}'.replace("'", "")).replace(", ", ": ")).replace("(", "")).replace(")", "")).title()).replace("True", "✅")).replace("False", "❌")).replace("Staff", f"{discord.PartialEmoji(name='StaffDiscord', id=875627848482832464, animated=False)} Staff")).replace("Partner", f"{discord.PartialEmoji(name='PartnerDiscord', id=875628049595527208, animated=False)} Partner")).replace("Hypesquad", f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} Hypesquad")).replace("Bug_Hunter", f"{discord.PartialEmoji(name='BughunterDiscord', id=875638745360138262, animated=False)} Bug_Hunter")).replace("Hypesquad_Bravery", f"{discord.PartialEmoji(name='BraveryLogo', id=875638856517570601, animated=False)} Hypesquad_Bravery")).replace("Hypesquad_Brilliance", f"{discord.PartialEmoji(name='BrillianceLogo', id=875638884443226133,)} Hypesquad_Brilliance")).replace("Hypesquad_Balance", f"{discord.PartialEmoji(name='BalanceLogo', id=875638903456034826, animated=False)} Hypesquad_Balance")).replace("Early_Supporter", f"{discord.PartialEmoji(name='EarlySupporter', id=875639057697353728, animated=False)} Early_Supporter")).replace("Team_User", f"{discord.PartialEmoji(name='TeamUser', id=875639157622460416, animated=False)} Team_User")).replace("System", f"{discord.PartialEmoji(name='SystemDiscord', id=875639240006959105, animated=False)} System")).replace("Bug_Hunter_Level_2", f"{discord.PartialEmoji(name='BugHunterlv2', id=875639279810912266, animated=False)} Bug_Hunter_Level_2")).replace("Verified_Bot", f"{discord.PartialEmoji(name='BotUser', id=875639837032583209, animated=False)} Verified_Bot")).replace("Verified_Bot_Developer", f"{discord.PartialEmoji(name='VerifiedBotdev', id=875656092120674346, animated=False)} Verified_Bot_Developer")).replace(f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} {discord.PartialEmoji(name='BraveryLogo', id=875638856517570601, animated=False)} Hypesquad_Bravery", f"{discord.PartialEmoji(name='BraveryLogo', id=875638856517570601, animated=False)} Hypesquad_Bravery")).replace(f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} {discord.PartialEmoji(name='BrillianceLogo', id=875638884443226133,)} Hypesquad_Brilliance", f"{discord.PartialEmoji(name='BrillianceLogo', id=875638884443226133,)} Hypesquad_Brilliance")).replace(f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} {discord.PartialEmoji(name='BalanceLogo', id=875638903456034826, animated=False)} Hypesquad_Balance", f"{discord.PartialEmoji(name='BalanceLogo', id=875638903456034826, animated=False)} Hypesquad_Balance")).replace(f"{discord.PartialEmoji(name='BughunterDiscord', id=875638745360138262, animated=False)} {discord.PartialEmoji(name='BugHunterlv2', id=875639279810912266, animated=False)} Bug_Hunter_Level_2", f"{discord.PartialEmoji(name='BugHunterlv2', id=875639279810912266, animated=False)} Bug_Hunter_Level_2")).replace(f"{discord.PartialEmoji(name='BotUser', id=875639837032583209, animated=False)} {discord.PartialEmoji(name='VerifiedBotdev', id=875656092120674346, animated=False)} Verified_Bot_Developer", f"{discord.PartialEmoji(name='VerifiedBotdev', id=875656092120674346, animated=False)} Verified_Bot_Developer")).replace("_", " ") for x in target.public_flags), inline=False)
+        embed.add_field(name=f"__{discord.PartialEmoji(name='Badge', id=875656242855559199, animated=False)} Badges: __", value='\n'.join(((((((((((((((((((((((((((f'{x}'.replace("'", "")).replace(", ", ": ")).replace("(", "")).replace(")", "")).title()).replace("True", "✅")).replace("False", "❌")).replace("Staff", f"{discord.PartialEmoji(name='StaffDiscord', id=875627848482832464, animated=False)} Staff")).replace("Partner", f"{discord.PartialEmoji(name='PartnerDiscord', id=875628049595527208, animated=False)} Partner")).replace("Hypesquad", f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} Hypesquad")).replace("Bug_Hunter", f"{discord.PartialEmoji(name='BughunterDiscord', id=875638745360138262, animated=False)} Bug_Hunter")).replace("Hypesquad_Bravery", f"{discord.PartialEmoji(name='BraveryLogo', id=875638856517570601, animated=False)} Hypesquad_Bravery")).replace("Hypesquad_Brilliance", f"{discord.PartialEmoji(name='BrillianceLogo', id=875638884443226133,)} Hypesquad_Brilliance")).replace("Hypesquad_Balance", f"{discord.PartialEmoji(name='BalanceLogo', id=875638903456034826, animated=False)} Hypesquad_Balance")).replace("Early_Supporter", f"{discord.PartialEmoji(name='EarlySupporter', id=875639057697353728, animated=False)} Early_Supporter")).replace("Team_User", f"{discord.PartialEmoji(name='TeamUser', id=875639157622460416, animated=False)} Team_User")).replace("System", f"{discord.PartialEmoji(name='SystemDiscord', id=875639240006959105, animated=False)} System")).replace("Bug_Hunter_Level_2", f"{discord.PartialEmoji(name='BugHunterlv2', id=875639279810912266, animated=False)} Bug_Hunter_Level_2")).replace("Verified_Bot", f"{discord.PartialEmoji(name='BotUser', id=875639837032583209, animated=False)} Verified_Bot")).replace("Verified_Bot_Developer", f"{discord.PartialEmoji(name='VerifiedBotdev', id=875656092120674346, animated=False)} Verified_Bot_Developer")).replace(f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} {discord.PartialEmoji(name='BraveryLogo', id=875638856517570601, animated=False)} Hypesquad_Bravery", f"{discord.PartialEmoji(name='BraveryLogo', id=875638856517570601, animated=False)} Hypesquad_Bravery")).replace(f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} {discord.PartialEmoji(name='BrillianceLogo', id=875638884443226133,)} Hypesquad_Brilliance", f"{discord.PartialEmoji(name='BrillianceLogo', id=875638884443226133,)} Hypesquad_Brilliance")).replace(f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} {discord.PartialEmoji(name='BalanceLogo', id=875638903456034826, animated=False)} Hypesquad_Balance", f"{discord.PartialEmoji(name='BalanceLogo', id=875638903456034826, animated=False)} Hypesquad_Balance")).replace(f"{discord.PartialEmoji(name='BughunterDiscord', id=875638745360138262, animated=False)} {discord.PartialEmoji(name='BugHunterlv2', id=875639279810912266, animated=False)} Bug_Hunter_Level_2", f"{discord.PartialEmoji(name='BugHunterlv2', id=875639279810912266, animated=False)} Bug_Hunter_Level_2")).replace(f"{discord.PartialEmoji(name='BotUser', id=875639837032583209, animated=False)} {discord.PartialEmoji(name='VerifiedBotdev', id=875656092120674346, animated=False)} Verified_Bot_Developer", f"{discord.PartialEmoji(name='VerifiedBotdev', id=875656092120674346, animated=False)} Verified_Bot_Developer")).replace("_", " ")).replace(f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} Hypesquad", f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} Hypesquad Events") for x in target.public_flags), inline=False)
         embed.set_thumbnail(url=target.avatar_url)
         embed.set_footer(icon_url=ctx.author.avatar_url, text=f"Requested by {ctx.author.name}")
         await ctx.send(embed=embed)
@@ -547,24 +529,23 @@ async def userinfo(ctx, target : Optional[Member]):
 @testbot.command(aliases=["bot"])
 async def botinfo(ctx):
     target = ctx.guild.me
-    application = discord.AppInfo
     botappinfo = await testbot.application_info()
-    botembed = discord.Embed(title=target.name, description=target.mention, colour = target.colour, timestamp=datetime.datetime.utcnow())
-    botembed.add_field(name=f"ID {discord.PartialEmoji(name='IDcard', id=868046662306770985, animated=False)} : ", value=target.id, inline=False)
-    botembed.add_field(name=f"Top role {discord.PartialEmoji(name='Top_Role', id=869212283941834764, animated=False)} : ", value=target.top_role.mention, inline=True)
-    botembed.add_field(name=f"Bot {discord.PartialEmoji(name='Humanbot', id=869219560488829008, animated=False)} :", value = bool(target.bot), inline=True)
-    botembed.add_field(name=f"Booster {discord.PartialEmoji(name='Booster', id=869228744462708856, animated=False)} :", value=bool(target.premium_since), inline=True)
-    botembed.add_field(name=f"Joined {discord.PartialEmoji(name='UserJoin', id=869220716468387910, animated=False)} :", value=datetime.date.strftime(target.joined_at, '%a, %d/%m/%Y %H:%M:%S'), inline=True)
-    botembed.add_field(name=f"Registered {discord.PartialEmoji(name='UserRegister', id=869222509902442528, animated=False)} :", value=datetime.date.strftime(target.created_at, '%a, %d/%m/%Y %H:%M:%S'), inline=True)
-    botembed.add_field(name=f"Activity {discord.PartialEmoji(name='Activity', id=869225549917220874, animated=False)} :", value=f"{str(target.activity.type).split('.')[-1].title() if target.activity else 'N/A'} | {target.activity.name if target.activity else 'N/A'}", inline=False)
-    botembed.add_field(name=f"Status {discord.PartialEmoji(name='Status', id=869226936197591070, animated=False)} :", value=str(target.status).upper(), inline=True)
-    botembed.add_field(name=f"Nickname {discord.PartialEmoji(name='Nickname', id=869227972496871466, animated=False)} :", value=target.nick, inline=True)
-    botembed.add_field(name=f"Roles({len(target.roles)}) {discord.PartialEmoji(name='Roles', id=869214008077602856, animated=False)} : ",value='|'.join(role.mention for role in target.roles), inline=False)
-    botembed.add_field(name="Discord.py version: ", value=discord.__version__, inline=True)
-    botembed.add_field(name="Servers: ", value=len(testbot.guilds), inline=True)
-    botembed.add_field(name=f"Permissions {discord.PartialEmoji(name='UserPerms', id=871662256709062676, animated=False)} :", value=', '.join((perm[0]) for perm in target.guild_permissions if perm[1]).replace("_", " "), inline=False)
-    botembed.add_field(name=f"__{discord.PartialEmoji(name='Badge', id=875656242855559199, animated=False)} Badges: __", value='\n'.join((((((((((((((((((((((((((f'{x}'.replace("'", "")).replace(", ", ": ")).replace("(", "")).replace(")", "")).title()).replace("True", "✅")).replace("False", "❌")).replace("Staff", f"{discord.PartialEmoji(name='StaffDiscord', id=875627848482832464, animated=False)} Staff")).replace("Partner", f"{discord.PartialEmoji(name='PartnerDiscord', id=875628049595527208, animated=False)} Partner")).replace("Hypesquad", f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} Hypesquad")).replace("Bug_Hunter", f"{discord.PartialEmoji(name='BughunterDiscord', id=875638745360138262, animated=False)} Bug_Hunter")).replace("Hypesquad_Bravery", f"{discord.PartialEmoji(name='BraveryLogo', id=875638856517570601, animated=False)} Hypesquad_Bravery")).replace("Hypesquad_Brilliance", f"{discord.PartialEmoji(name='BrillianceLogo', id=875638884443226133,)} Hypesquad_Brilliance")).replace("Hypesquad_Balance", f"{discord.PartialEmoji(name='BalanceLogo', id=875638903456034826, animated=False)} Hypesquad_Balance")).replace("Early_Supporter", f"{discord.PartialEmoji(name='EarlySupporter', id=875639057697353728, animated=False)} Early_Supporter")).replace("Team_User", f"{discord.PartialEmoji(name='TeamUser', id=875639157622460416, animated=False)} Team_User")).replace("System", f"{discord.PartialEmoji(name='SystemDiscord', id=875639240006959105, animated=False)} System")).replace("Bug_Hunter_Level_2", f"{discord.PartialEmoji(name='BugHunterlv2', id=875639279810912266, animated=False)} Bug_Hunter_Level_2")).replace("Verified_Bot", f"{discord.PartialEmoji(name='BotUser', id=875639837032583209, animated=False)} Verified_Bot")).replace("Verified_Bot_Developer", f"{discord.PartialEmoji(name='VerifiedBotdev', id=875656092120674346, animated=False)} Verified_Bot_Developer")).replace(f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} {discord.PartialEmoji(name='BraveryLogo', id=875638856517570601, animated=False)} Hypesquad_Bravery", f"{discord.PartialEmoji(name='BraveryLogo', id=875638856517570601, animated=False)} Hypesquad_Bravery")).replace(f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} {discord.PartialEmoji(name='BrillianceLogo', id=875638884443226133,)} Hypesquad_Brilliance", f"{discord.PartialEmoji(name='BrillianceLogo', id=875638884443226133,)} Hypesquad_Brilliance")).replace(f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} {discord.PartialEmoji(name='BalanceLogo', id=875638903456034826, animated=False)} Hypesquad_Balance", f"{discord.PartialEmoji(name='BalanceLogo', id=875638903456034826, animated=False)} Hypesquad_Balance")).replace(f"{discord.PartialEmoji(name='BughunterDiscord', id=875638745360138262, animated=False)} {discord.PartialEmoji(name='BugHunterlv2', id=875639279810912266, animated=False)} Bug_Hunter_Level_2", f"{discord.PartialEmoji(name='BugHunterlv2', id=875639279810912266, animated=False)} Bug_Hunter_Level_2")).replace(f"{discord.PartialEmoji(name='BotUser', id=875639837032583209, animated=False)} {discord.PartialEmoji(name='VerifiedBotdev', id=875656092120674346, animated=False)} Verified_Bot_Developer", f"{discord.PartialEmoji(name='VerifiedBotdev', id=875656092120674346, animated=False)} Verified_Bot_Developer")).replace("_", " ") for x in target.public_flags), inline=False)
-    botembed.add_field(name="Creator: ", value=botappinfo.owner, inline=True)
+    botembed = discord.Embed(title=target, description=f"{target.mention} | **__{discord.PartialEmoji(name='IDcard', id=868046662306770985, animated=False)} ID: __** {target.id}", colour = target.colour, timestamp=datetime.datetime.utcnow())
+    botembed.add_field(name=f"__{discord.PartialEmoji(name='Top_Role', id=869212283941834764, animated=False)} Top role: __", value=target.top_role.mention, inline=True)
+    botembed.add_field(name=f"__{discord.PartialEmoji(name='Humanbot', id=869219560488829008, animated=False)} Bot: __", value = bool(target.bot), inline=True)
+    botembed.add_field(name=f"__{discord.PartialEmoji(name='Booster', id=869228744462708856, animated=False)} Booster: __", value=bool(target.premium_since), inline=True)
+    botembed.add_field(name=f"__{discord.PartialEmoji(name='UserJoin', id=869220716468387910, animated=False)} Joined: __", value=datetime.date.strftime(target.joined_at, '%a, %d/%m/%Y %H:%M:%S'), inline=True)
+    botembed.add_field(name=f"__{discord.PartialEmoji(name='UserRegister', id=869222509902442528, animated=False)} Registered: __", value=datetime.date.strftime(target.created_at, '%a, %d/%m/%Y %H:%M:%S'), inline=True)
+    botembed.add_field(name=f"__{discord.PartialEmoji(name='Activity', id=869225549917220874, animated=False)} Activity: __", value=f"{str(target.activity.type).split('.')[-1].title() if target.activity else 'N/A'} | {target.activity.name if target.activity else 'N/A'}", inline=False)
+    botembed.add_field(name=f"__{discord.PartialEmoji(name='Status', id=869226936197591070, animated=False)}  Status: __", value=str(target.status).upper(), inline=True)
+    botembed.add_field(name=f"__{discord.PartialEmoji(name='Nickname', id=869227972496871466, animated=False)} Nickname: __", value=target.nick, inline=True)
+    botembed.add_field(name=f"__{discord.PartialEmoji(name='Roles', id=869214008077602856, animated=False)} Roles({len(target.roles)}): __",value='|'.join(role.mention for role in target.roles), inline=False)
+    botembed.add_field(name=f"__{discord.PartialEmoji(name='DiscordPython', id=876495517960527912, animated=False)} Discord.py version: __", value=((f"{discord.__version__}| {discord.version_info[3]} release").title()).replace("Final", "Stable"), inline=True)
+    botembed.add_field(name=f"__{discord.PartialEmoji(name='Server', id=876495661179211816, animated=False)} Servers: __", value=len(testbot.guilds), inline=True)
+    botembed.add_field(name=f"__{discord.PartialEmoji(name='UserPerms', id=871662256709062676, animated=False)} Permissions: __", value=', '.join(f"{(perm[0])}".title() for perm in target.guild_permissions if perm[1]).replace("_", " "), inline=False)
+    botembed.add_field(name=f"__{discord.PartialEmoji(name='Badge', id=875656242855559199, animated=False)} Badges: __", value='\n'.join(((((((((((((((((((((((((((f'{x}'.replace("'", "")).replace(", ", ": ")).replace("(", "")).replace(")", "")).title()).replace("True", "✅")).replace("False", "❌")).replace("Staff", f"{discord.PartialEmoji(name='StaffDiscord', id=875627848482832464, animated=False)} Staff")).replace("Partner", f"{discord.PartialEmoji(name='PartnerDiscord', id=875628049595527208, animated=False)} Partner")).replace("Hypesquad", f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} Hypesquad")).replace("Bug_Hunter", f"{discord.PartialEmoji(name='BughunterDiscord', id=875638745360138262, animated=False)} Bug_Hunter")).replace("Hypesquad_Bravery", f"{discord.PartialEmoji(name='BraveryLogo', id=875638856517570601, animated=False)} Hypesquad_Bravery")).replace("Hypesquad_Brilliance", f"{discord.PartialEmoji(name='BrillianceLogo', id=875638884443226133,)} Hypesquad_Brilliance")).replace("Hypesquad_Balance", f"{discord.PartialEmoji(name='BalanceLogo', id=875638903456034826, animated=False)} Hypesquad_Balance")).replace("Early_Supporter", f"{discord.PartialEmoji(name='EarlySupporter', id=875639057697353728, animated=False)} Early_Supporter")).replace("Team_User", f"{discord.PartialEmoji(name='TeamUser', id=875639157622460416, animated=False)} Team_User")).replace("System", f"{discord.PartialEmoji(name='SystemDiscord', id=875639240006959105, animated=False)} System")).replace("Bug_Hunter_Level_2", f"{discord.PartialEmoji(name='BugHunterlv2', id=875639279810912266, animated=False)} Bug_Hunter_Level_2")).replace("Verified_Bot", f"{discord.PartialEmoji(name='BotUser', id=875639837032583209, animated=False)} Verified_Bot")).replace("Verified_Bot_Developer", f"{discord.PartialEmoji(name='VerifiedBotdev', id=875656092120674346, animated=False)} Verified_Bot_Developer")).replace(f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} {discord.PartialEmoji(name='BraveryLogo', id=875638856517570601, animated=False)} Hypesquad_Bravery", f"{discord.PartialEmoji(name='BraveryLogo', id=875638856517570601, animated=False)} Hypesquad_Bravery")).replace(f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} {discord.PartialEmoji(name='BrillianceLogo', id=875638884443226133,)} Hypesquad_Brilliance", f"{discord.PartialEmoji(name='BrillianceLogo', id=875638884443226133,)} Hypesquad_Brilliance")).replace(f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} {discord.PartialEmoji(name='BalanceLogo', id=875638903456034826, animated=False)} Hypesquad_Balance", f"{discord.PartialEmoji(name='BalanceLogo', id=875638903456034826, animated=False)} Hypesquad_Balance")).replace(f"{discord.PartialEmoji(name='BughunterDiscord', id=875638745360138262, animated=False)} {discord.PartialEmoji(name='BugHunterlv2', id=875639279810912266, animated=False)} Bug_Hunter_Level_2", f"{discord.PartialEmoji(name='BugHunterlv2', id=875639279810912266, animated=False)} Bug_Hunter_Level_2")).replace(f"{discord.PartialEmoji(name='BotUser', id=875639837032583209, animated=False)} {discord.PartialEmoji(name='VerifiedBotdev', id=875656092120674346, animated=False)} Verified_Bot_Developer", f"{discord.PartialEmoji(name='VerifiedBotdev', id=875656092120674346, animated=False)} Verified_Bot_Developer")).replace("_", " ")).replace(f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} Hypesquad", f"{discord.PartialEmoji(name='HypesquadDiscord', id=875638722526347305, animated=False)} Hypesquad Events") for x in target.public_flags), inline=False)
+    botembed.add_field(name=f"__{discord.PartialEmoji(name='Botcreator', id=876496012393476116, animated=False)} Creator: __", value=botappinfo.owner, inline=True)
+    botembed.add_field(name="__Codename: __", value=botappinfo.name, inline=True)
     botembed.set_thumbnail(url=botappinfo.icon_url)
     botembed.set_footer(icon_url=ctx.author.avatar_url, text=f"Requested by {ctx.author.name}")
     await ctx.send(embed=botembed)
@@ -577,26 +558,26 @@ async def serverinfo(ctx):
 					len(list(filter(lambda m: str(m.status) == "idle", ctx.guild.members))),
 					len(list(filter(lambda m: str(m.status) == "dnd", ctx.guild.members))),
 					len(list(filter(lambda m: str(m.status) == "offline", ctx.guild.members)))]
-    guildembed = discord.Embed(title=guild.name, description=f"**Description {discord.PartialEmoji(name='Serverdesc', id=871586961188610079, animated=False)} : ** {guild.description}", colour = ctx.guild.owner.colour, timestamp=datetime.datetime.utcnow())
-    guildembed.add_field(name=f"ID {discord.PartialEmoji(name='ServerID', id=871583345363021854, animated=False)} :", value=guild.id, inline=True)
-    guildembed.add_field(name=f"Created on {discord.PartialEmoji(name='Servercreation', id=871591082260058123, animated=False)} :", value = datetime.date.strftime(guild.created_at, '%a, %d/%m/%Y %H:%M:%S'), inline=True)
-    guildembed.add_field(name=f"Roles({len(guild.roles)}) {discord.PartialEmoji(name='Serverroles', id=871615599091007519, animated=False)} :", value='|'.join(role.mention for role in guild.roles), inline=False)
+    guildembed = discord.Embed(title=guild.name, description=f"**{discord.PartialEmoji(name='Serverdesc', id=871586961188610079, animated=False)} Description: ** {guild.description}", colour = ctx.guild.owner.colour, timestamp=datetime.datetime.utcnow())
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='ServerID', id=871583345363021854, animated=False)} ID: ", value=guild.id, inline=True)
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='Servercreation', id=871591082260058123, animated=False)} Created on: ", value = datetime.date.strftime(guild.created_at, '%a, %d/%m/%Y %H:%M:%S'), inline=True)
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='Serverroles', id=871615599091007519, animated=False)} Roles({len(guild.roles)}): ", value='|'.join(role.mention for role in guild.roles), inline=False)
     guildembed.set_thumbnail(url=guild.icon_url)
-    guildembed.add_field(name=f"Emojis({int(len(guild.emojis))}) {discord.PartialEmoji(name='Emojiblob', id=871715724693999677, animated=False)} :", value=''.join(str(emote) for emote in guild.emojis[0:32]), inline=False)
-    guildembed.add_field(name=f"Membercount {discord.PartialEmoji(name='Membercount', id=871616325108248586, animated=False)} :", value=f"`{guild.member_count}` Members", inline=True)
-    guildembed.add_field(name=f"Humans {discord.PartialEmoji(name='Human', id=871617153495859230, animated=False)} :", value =f"`{len(list(filter(lambda m: not m.bot, guild.members)))}` Human(s)", inline=True)
-    guildembed.add_field(name=f"Bots {discord.PartialEmoji(name='Bot', id=871620978462048317, animated=False)} :", value=f"`{len(list(filter(lambda m: m.bot, guild.members)))}` Bot(s)", inline=True)
-    guildembed.add_field(name=f"Member bans {discord.PartialEmoji(name='Banhammer', id=871624353681399898, animated=False)} :", value=len(await guild.bans()), inline=True)
-    guildembed.add_field(name=f"Nitro boost level {discord.PartialEmoji(name='Nitroboost', id=871624854288351242, animated=False)}:", value=f"Level {guild.premium_tier}", inline=True)
-    guildembed.add_field(name=f"Boosts {discord.PartialEmoji(name='Booster', id=869228744462708856, animated=False)} :", value=guild.premium_subscription_count, inline=True)
-    guildembed.add_field(name=f"Statuses {discord.PartialEmoji(name='Statuses', id=872498901842788453, animated=False)} :", value=f"{discord.PartialEmoji(name='Useronline', id=871985942741782539, animated=False)} {statuses[0]} {discord.PartialEmoji(name='Useridle', id=871985959737102367, animated=False)} {statuses[1]} {discord.PartialEmoji(name='Userdnd', id=871986111843532852, animated=False)} {statuses[2]} {discord.PartialEmoji(name='Useroffline', id=871986172346376252, animated=False)} {statuses[3]}", inline=True)
-    guildembed.add_field(name=f"Verification level {discord.PartialEmoji(name='Serververify', id=871978151058751528, animated=False)} :", value=str(guild.verification_level).title(), inline=True)
-    guildembed.add_field(name=f"Text channels({len(guild.text_channels)}) {discord.PartialEmoji(name='Textchannel', id=871628497414684682, animated=False)} :", value='|'.join(channel.mention for channel in guild.text_channels), inline=False)
-    guildembed.add_field(name=f"Voice channels({len(guild.voice_channels)}) {discord.PartialEmoji(name='Voicechannel', id=871632753186177055, animated=False)} :", value='|'.join(channel.mention for channel in guild.voice_channels), inline=False)
-    guildembed.add_field(name=f"Channel categories({len(guild.categories)}) {discord.PartialEmoji(name='Category', id=871636437609639977, animated=False)} :", value=' | '.join(category.mention for category in guild.categories), inline=False)
-    guildembed.add_field(name=f"Region {discord.PartialEmoji(name='Serverregion', id=871638602843553792, animated=False)} :", value=str(guild.region).title(), inline=True)
-    guildembed.add_field(name=f"Owner {discord.PartialEmoji(name='Serverowner', id=871641007400300574, animated=False)} :", value=guild.owner.mention, inline=True)
-    guildembed.add_field(name=f"Features {discord.PartialEmoji(name='Serverfeature', id=875656634280579082, animated=False)} :", value='\n'.join(f"{discord.PartialEmoji(name='MemberEnter', id=875359683517509633, animated=False)} **`{x}`**".replace("_", " ") for x in ctx.guild.features), inline=False)
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='Emojiblob', id=871715724693999677, animated=False)} Emojis({int(len(guild.emojis))}): ", value=f"{''.join(str(emote) for emote in guild.emojis[0:32])} and more", inline=False)
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='Membercount', id=871616325108248586, animated=False)} Membercount: ", value=f"`{guild.member_count}` Members", inline=True)
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='Human', id=871617153495859230, animated=False)} Humans: ", value =f"`{len(list(filter(lambda m: not m.bot, guild.members)))}` Human(s)", inline=True)
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='Bot', id=871620978462048317, animated=False)} Bots: ", value=f"`{len(list(filter(lambda m: m.bot, guild.members)))}` Bot(s)", inline=True)
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='Banhammer', id=871624353681399898, animated=False)} Member bans: ", value=len(await guild.bans()), inline=True)
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='Nitroboost', id=871624854288351242, animated=False)} Nitro boost level: ", value=f"Level {guild.premium_tier}", inline=True)
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='Booster', id=869228744462708856, animated=False)} Boosts: ", value=guild.premium_subscription_count, inline=True)
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='Statuses', id=872498901842788453, animated=False)} Statuses: ", value=f"{discord.PartialEmoji(name='Useronline', id=871985942741782539, animated=False)} {statuses[0]} {discord.PartialEmoji(name='Useridle', id=871985959737102367, animated=False)} {statuses[1]} {discord.PartialEmoji(name='Userdnd', id=871986111843532852, animated=False)} {statuses[2]} {discord.PartialEmoji(name='Useroffline', id=871986172346376252, animated=False)} {statuses[3]}", inline=True)
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='Serververify', id=871978151058751528, animated=False)} Verification level: ", value=str(guild.verification_level).title(), inline=True)
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='Textchannel', id=871628497414684682, animated=False)} Text channels({len(guild.text_channels)}): ", value='|'.join(channel.mention for channel in guild.text_channels), inline=False)
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='Voicechannel', id=871632753186177055, animated=False)} Voice channels({len(guild.voice_channels)}): ", value='|'.join(channel.mention for channel in guild.voice_channels), inline=False)
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='Category', id=871636437609639977, animated=False)} Channel categories({len(guild.categories)}): ", value=' | '.join(category.mention for category in guild.categories), inline=False)
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='Serverregion', id=871638602843553792, animated=False)} Region: ", value=str(guild.region).title(), inline=True)
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='Serverowner', id=871641007400300574, animated=False)} Owner: ", value=guild.owner.mention, inline=True)
+    guildembed.add_field(name=f"{discord.PartialEmoji(name='Serverfeature', id=875656634280579082, animated=False)} Features: ", value='\n'.join(f"{discord.PartialEmoji(name='MemberEnter', id=875359683517509633, animated=False)} **`{x}`**".replace("_", " ") for x in ctx.guild.features), inline=False)
     guildembed.set_footer(icon_url=ctx.author.avatar_url, text=f"Requested by {ctx.author.name}")
     await ctx.send(embed=guildembed)
 
@@ -617,7 +598,8 @@ async def eightball(ctx, *, question):
 @testbot.command(pass_context=True)
 @commands.has_permissions(manage_roles=True)
 async def giverole(ctx, emoji, role : discord.Role, *, rolemessage):
-    emb = discord.Embed(title='Reaction role!', description=rolemessage, colour = discord.Colour.magenta())
+    emb = discord.Embed(title='Reaction role!', description=rolemessage, colour = role.colour)
+    emb.set_footer(text="This reaction embed will expire after 30 days! ")
     rolemsg = await ctx.channel.send(embed=emb)
     await rolemsg.add_reaction(emoji)
 
@@ -633,7 +615,13 @@ async def giverole(ctx, emoji, role : discord.Role, *, rolemessage):
     
     with open('giverole.json','w') as f:
         json.dump(data,f,indent=4)
-
+    await asyncio.sleep(2592000)
+    embvone = discord.Embed(title='Reactions role!', description=rolemessage, colour = discord.Colour.magenta())
+    embvone.set_footer(text="This reaction embed has expired, ask the admin to make a new one!")
+    await rolemsg.edit(embed=embvone)
+    with open('giverole.json', 'w') as f:
+        data.remove(new_react_role)
+        json.dump(data,f,indent=4)
 
 @testbot.command()
 async def meme(ctx, memes="memes"):
@@ -648,11 +636,21 @@ async def meme(ctx, memes="memes"):
     random_sub = random.choice(all_subs)
 
     name = random_sub.title
+    posturl = random_sub.permalink
     url = random_sub.url
+    subredditname = random_sub.subreddit
+    subredditicon = random_sub.subreddit.icon_img
+    upvote = random_sub.upvote_ratio*100
+    flair = random_sub.link_flair_text
+    comments = random_sub.num_comments
+    poster = random_sub.author.name
+    posttimeutc = datetime.datetime.fromtimestamp(random_sub.created_utc)
+    postdate = posttimeutc.strftime('%d/%m/%Y')
+    posttime = posttimeutc.strftime('%H:%M:%S')
 
-    em = discord.Embed(title=name)
+    em = discord.Embed(title=name, url=f"https://www.reddit.com{posturl}", description = f"[u/{poster}](https://www.reddit.com/user/{poster}) | {upvote}% upvotes | Flair : `{flair}` | Comments : _{comments}_")
     em.set_image(url=url)
-    em.set_footer(icon_url="https://styles.redditmedia.com/t5_2qjpg/styles/communityIcon_wal7c12k77v61.png", text="r/memes")
+    em.set_footer(icon_url=subredditicon, text=f"Posted on {postdate} at {posttime} in r/{subredditname}")
 
     await ctx.send(embed=em)
 
@@ -669,11 +667,14 @@ async def formuladank(ctx, f1meme="formuladank"):
     random_sub = random.choice(all_subs)
 
     name = random_sub.title
+    posturl = random_sub.permalink
     url = random_sub.url
+    subredditname = random_sub.subreddit
+    subredditicon = random_sub.subreddit.icon_img
 
-    em = discord.Embed(title=name)
+    em = discord.Embed(title=name, url=f"https://www.reddit.com{posturl}")
     em.set_image(url=url)
-    em.set_footer(icon_url="https://styles.redditmedia.com/t5_3ndbi/styles/communityIcon_vez4sc4u1sr61.png", text="r/formuladank")
+    em.set_footer(icon_url=subredditicon, text=f"r/{subredditname}")
     
     await ctx.send(embed=em)
 
@@ -690,11 +691,14 @@ async def engrish(ctx, ripenglish="engrish"):
     random_sub = random.choice(all_subs)
 
     name = random_sub.title
+    posturl = random_sub.permalink
     url = random_sub.url
+    subredditname = random_sub.subreddit
+    subredditicon = random_sub.subreddit.icon_img
 
-    em = discord.Embed(title=name)
+    em = discord.Embed(title=name, url=f"https://www.reddit.com{posturl}")
     em.set_image(url=url)
-    em.set_footer(icon_url="https://styles.redditmedia.com/t5_2qmxz/styles/communityIcon_idhheje7gps21.png", text="r/engrish")
+    em.set_footer(icon_url=subredditicon, text=f"r/{subredditname}")
 
     await ctx.send(embed=em)
 
@@ -713,10 +717,13 @@ async def crapmcsuggest(ctx, shitmc="shittymcsuggestions"):
     name = random_sub.title
     post = random_sub.selftext
     url = random_sub.url
+    posturl = random_sub.permalink
+    subredditname = random_sub.subreddit
+    subredditicon = random_sub.subreddit.icon_img
 
-    em = discord.Embed(title=name, description=post)
+    em = discord.Embed(title=name, description=post, url=f"https://www.reddit.com{posturl}")
     em.set_image(url=url)
-    em.set_footer(icon_url="https://styles.redditmedia.com/t5_2vdeq/styles/communityIcon_7tn9yczajec41.png?width=256&s=5aaefc7f21d16683c8916c363eaabb910a8585c3", text="r/shittymcsuggestions")
+    em.set_footer(icon_url=subredditicon, text=f"r/{subredditname}")
 
     await ctx.send(embed=em)
 
@@ -744,7 +751,10 @@ async def verbose(ctx, verboseup="IncreasinglyVerbose"):
 @testbot.command(aliases=["owo"])
 async def owofy(ctx):
     c = ctx.message.content
-    c = c.replace('&owofy', '', 1)
+    if ctx.message.content.startswith('&owofy'):
+        c = c.replace('&owofy', '', 1)
+    elif ctx.message.content.startswith('&owo'):
+        c = c.replace('&owo', '', 1)
     await ctx.send(text_to_owo(c))
 
 def check(message):
@@ -1393,4 +1403,5 @@ if __name__ == "__main__":  # When script is loaded, this will run
             exc = '{}: {}'.format(type(e).__name__, e)
             print('Failed to load extension {}\n{}'.format(extension, exc))  # Failed to load cog, with error
 
-testbot.run(discord_token)
+DISCORD_TOKEN = os.getenv("TOKEN")
+testbot.run(DISCORD_TOKEN)

@@ -38,6 +38,7 @@ game = {
 
 class Snakegame(commands.Cog, name = "Snake"):
     """Play a game of snake right on Discord!"""
+    COG_EMOJI = "🐍"
     def __init__(self, bot):
         self.bot = bot
 

@@ -10,6 +10,7 @@ from PIL import Image
 
 class Chess(commands.Cog, name="Chess"):
     """Play a game of chess right on Discord!"""
+    COG_EMOJI = "♟"
 
     def __init__(self, bot):
         self.bot = bot

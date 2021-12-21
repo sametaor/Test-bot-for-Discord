@@ -12,6 +12,7 @@ import wikipediaapi
 
 class Wikipedia(commands.Cog):
     """Get detailed info on any topic via Wikipedia!"""
+    COG_EMOJI = "📖"
     def __init__(self, bot):
         self.bot = bot
     

@@ -1,10 +1,10 @@
 import discord
 
 key_features = {
-    'temp' : 'Temperature(in ℃):',
+    'temp' : 'Temp(in ℃):',
     'feels_like' : 'Feels Like(in ℃):',
-    'temp_max' : 'Max Temperature(in ℃):',
-    'temp_min' : 'Min Temperature(in ℃):',
+    'temp_max' : 'Max Temp(in ℃):',
+    'temp_min' : 'Min Temp(in ℃):',
     'humidity' : 'Humidity(in %):',
     'pressure' : 'Pressure(in mb):'
 }

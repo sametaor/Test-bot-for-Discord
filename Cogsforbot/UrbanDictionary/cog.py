@@ -64,6 +64,7 @@ async def search_random_word():
 
 class Urbandict(commands.Cog):
     """Get definitions of words straight from Urban Dictionary."""
+    COG_EMOJI = "📔"
 
     def __init__(self, bot):
         self.bot = bot

@@ -5,7 +5,7 @@ from dotenv.main import load_dotenv
 from Cogsforbot.Twentyfortyeight.Gamegrid import *
 from imgurpython import ImgurClient
 
-load_dotenv()
+load_dotenv('imgur.env')
 
 imgur_client_id = os.getenv('IMGUR_CLIENT_ID')
 imgur_client_secret = os.getenv('IMGUR_CLIENT_SECRET')

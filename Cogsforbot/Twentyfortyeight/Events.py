@@ -1,10 +1,16 @@
 import os
 import discord
 from discord.ext import commands
+from dotenv.main import load_dotenv
 from Cogsforbot.Twentyfortyeight.Gamegrid import *
 from imgurpython import ImgurClient
 
-imgur_client = ImgurClient(IMGUR_CLIENT_ID, IMGUR_CLIENT_SECRET)
+load_dotenv()
+
+imgur_client_id = os.getenv('IMGUR_CLIENT_ID')
+imgur_client_secret = os.getenv('IMGUR_CLIENT_SECRET')
+
+imgur_client = ImgurClient(imgur_client_id, imgur_client_secret)
 
 class Events:
 

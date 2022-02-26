@@ -146,7 +146,7 @@ async def on_message(msg):
     if msg.author != testbot.user and msg.content.startswith('&weather'):
         if len((msg.content.replace('&weather ', ''))) >= 1:
             location = msg.content.replace('&weather ', '')
-            url = 'http://api.openweathermap.org/data/2.5/weather?q=' + location + '&appid=' + api_key + '&units=metric'
+            url = 'http://api.openweathermap.org/data/2.5/weather?q=' + location + '&appid=' + os.getenv('WEATHER_API_KEY') + '&units=metric'
             try:
                 data = parse_data(json.loads(requests.get(url).content)['main'])
                 await msg.channel.send(embed=weathermsg(data, location))

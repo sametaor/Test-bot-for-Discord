@@ -2,8 +2,8 @@ import asyncio
 import json
 
 import aiohttp
-import discord
-from discord.ext import commands
+import nextcord
+from nextcord.ext import commands
 
 # Constants
 BASEURL = 'https://api.urbandictionary.com/v0/'
@@ -11,12 +11,12 @@ NEXT_DEFINITION = '➡️'
 MAX_EMBED_VALUE_LENGTH = 1024
 
 
-def add_field_to_embed(embed: discord.Embed,
+def add_field_to_embed(embed: nextcord.Embed,
                        *, name: str, value: str):
     """
     Adds a field to a given embed, taking note of whether the value is empty
     and also that the value is less than the embed's maximum
-    :param embed: discord.Embed to add to
+    :param embed: nextcord.Embed to add to
     :param name: Title of the field
     :param value: Content of the field.
     """
@@ -84,7 +84,7 @@ class Urbandict(commands.Cog):
         message = None
 
         if len(definitions) == 0:
-            embed = discord.Embed(color=discord.Color.gold())
+            embed = nextcord.Embed(color=nextcord.Color.gold())
             embed.add_field(
                 name="Error",
                 value="There was no definition found for that word."
@@ -97,7 +97,7 @@ class Urbandict(commands.Cog):
             example = definitions[counter]['example']
             word = definitions[counter]['word']
 
-            embed = discord.Embed(title="Defining...", color=discord.Color.gold())
+            embed = nextcord.Embed(title="Defining...", color=nextcord.Color.gold())
 
             for name, value in [("Word", word),
                                 ("Definition", definition),

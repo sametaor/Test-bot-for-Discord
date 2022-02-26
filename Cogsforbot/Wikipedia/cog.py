@@ -1,14 +1,25 @@
 import datetime
-import discord
+import nextcord
 import inspect
 import urbandictionary as ud
 import re
-from discord.ext import commands
+import btns_menus
+from nextcord.ext import commands
+from btns_menus.Paginator import *
 import functools
 import urllib.request
 import urllib.parse
 import wikipediaapi
 
+
+def count(list1, l, r):
+    c = 0
+    # traverse in the list1
+    for x in list1:
+        # condition check
+        if x>= l and x<= r:
+            c+= 1
+    return c
 
 class Wikipedia(commands.Cog):
     """Get detailed info on any topic via Wikipedia!"""
@@ -37,8 +48,20 @@ class Wikipedia(commands.Cog):
 
         print("Page - Summary: %s" % page_py.summary[0:60])
             # Page - Summary: Python is a widely used high-level programming language for
-        wikiembed = discord.Embed(title =page_py.title, description = page_py.summary[0:2000], colour = discord.Colour.lighter_grey())
-        await ctx.send(embed=wikiembed)
+        string_length = len(page_py.summary)
+        if string_length < 2000:
+            wikiembed = nextcord.Embed(title =page_py.title, description = page_py.summary, url =page_py.fullurl, colour = nextcord.Colour.lighter_grey())
+            await ctx.send(embed=wikiembed)
+        else:
+            max_index = 2000
+            index = 0
+            while index < (string_length - max_index):
+                posted_string = page_py.summary[index:max_index]
+                wikiembed = nextcord.Embed(title =page_py.title, description = posted_string, url =page_py.fullurl, colour = nextcord.Colour.lighter_grey())
+                index = index + max_index
+                posted_string = page_py.summary[index-max_index:]
+                wikiembed = nextcord.Embed(title =page_py.title, description = page_py.summary, url =page_py.fullurl, colour = nextcord.Colour.lighter_grey())
+                await ctx.send(embed=wikiembed)
 
 def setup(bot):
     bot.add_cog(Wikipedia(bot))

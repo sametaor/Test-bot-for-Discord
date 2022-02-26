@@ -4,7 +4,6 @@ import inspect
 import urbandictionary as ud
 import re
 from nextcord.ext import commands
-from btns_menus.Paginator import *
 import functools
 import urllib.request
 import urllib.parse

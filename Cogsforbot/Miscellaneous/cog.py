@@ -1,7 +1,6 @@
 import nextcord
 from nextcord.ext import commands
 import requests
-from Cogsforbot.Miscellaneous.discordsecrets import RANDOMSTUFFAPIKEY, RAPIDAPIKEY
 
 class AIresponse(commands.Cog):
     def __init__(self, bot):

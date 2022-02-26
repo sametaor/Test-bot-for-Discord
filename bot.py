@@ -15,7 +15,6 @@ import datetime
 from nextcord import Member, Spotify
 from typing import Optional
 from nextcord.ext import commands, tasks
-from discordsecrets import api_key
 from texttoowo import text_to_owo
 from redditmeme import reddit
 from itertools import cycle

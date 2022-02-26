@@ -3,7 +3,6 @@ import nextcord
 import inspect
 import urbandictionary as ud
 import re
-import btns_menus
 from nextcord.ext import commands
 from btns_menus.Paginator import *
 import functools

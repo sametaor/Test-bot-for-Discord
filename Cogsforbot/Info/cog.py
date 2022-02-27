@@ -121,7 +121,7 @@ class Information(commands.Cog):
         guildembed.add_field(name=f"{nextcord.PartialEmoji(name='ServerID', id=871583345363021854, animated=False)} ID: ", value=guild.id, inline=True)
         guildembed.add_field(name=f"{nextcord.PartialEmoji(name='Servercreation', id=871591082260058123, animated=False)} Created on: ", value = datetime.date.strftime(guild.created_at, '%a, %d/%m/%Y %H:%M:%S'), inline=True)
         guildembed.add_field(name=f"{nextcord.PartialEmoji(name='Serverroles', id=871615599091007519, animated=False)} Roles({len(guild.roles)}): ", value='|'.join(role.mention for role in guild.roles), inline=False)
-        guildembed.set_thumbnail(url=guild.icon.url)
+        guildembed.set_thumbnail(url=guild.icon.url if guild.icon else "https://i.imgur.com/poBdtmA.png")
         guildembed.add_field(name=f"{nextcord.PartialEmoji(name='Emojiblob', id=871715724693999677, animated=False)} Emojis({int(len(guild.emojis))}): ", value=f"{''.join(str(emote) for emote in guild.emojis[0:32])} and more", inline=False)
         guildembed.add_field(name=f"{nextcord.PartialEmoji(name='Membercount', id=871616325108248586, animated=False)} Membercount: ", value=f"`{guild.member_count}` Members", inline=True)
         guildembed.add_field(name=f"{nextcord.PartialEmoji(name='Human', id=871617153495859230, animated=False)} Humans: ", value =f"`{len(list(filter(lambda m: not m.bot, guild.members)))}` Human(s)", inline=True)

@@ -1,6 +1,10 @@
 import nextcord
 from nextcord.ext import commands
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv('aichat.env')
 
 class AIresponse(commands.Cog):
     def __init__(self, bot):
@@ -17,9 +21,9 @@ class AIresponse(commands.Cog):
             querystring = {"msg":text,"bot_name":"Tachyon","bot_gender":"Male","bot_master":"sametaor","bot_age":"2","bot_build":"Public ","bot_birth_year":"2020","bot_birth_date":"15th April, 2020","bot_favorite_color":"Blue"}
 
             headers = {
-            'authorization': RANDOMSTUFFAPIKEY,
+            'authorization': os.getenv('RANDOMSTUFFAPIKEY'),
             'x-rapidapi-host': "random-stuff-api.p.rapidapi.com",
-            'x-rapidapi-key': RAPIDAPIKEY
+            'x-rapidapi-key': os.getenv('RAPIDAPIKEY')
             }
             response = requests.request("GET", url, headers=headers, params=querystring)
 

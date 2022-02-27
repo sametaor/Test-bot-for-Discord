@@ -136,7 +136,7 @@ class Information(commands.Cog):
         guildembed.add_field(name=f"{nextcord.PartialEmoji(name='Category', id=871636437609639977, animated=False)} Channel categories({len(guild.categories)}): ", value=' | '.join(category.mention for category in guild.categories), inline=False)
         guildembed.add_field(name=f"{nextcord.PartialEmoji(name='Serverregion', id=871638602843553792, animated=False)} Region: ", value=str(guild.region).title(), inline=True)
         guildembed.add_field(name=f"{nextcord.PartialEmoji(name='Serverowner', id=871641007400300574, animated=False)} Owner: ", value=guild.owner.mention, inline=True)
-        guildembed.add_field(name=f"{nextcord.PartialEmoji(name='Serverfeature', id=875656634280579082, animated=False)} Features: ", value='\n'.join(f"{nextcord.PartialEmoji(name='MemberEnter', id=875359683517509633, animated=False)} **`{x}`**".replace("_", " ") for x in ctx.guild.features), inline=False)
+        guildembed.add_field(name=f"{nextcord.PartialEmoji(name='Serverfeature', id=875656634280579082, animated=False)} Features: ", value=('\n'.join(f"{nextcord.PartialEmoji(name='MemberEnter', id=875359683517509633, animated=False)} **`{x}`**".replace("_", " ") for x in ctx.guild.features)) if ctx.guild.features else 'N/A', inline=False)
         guildembed.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name}")
         await ctx.send(embed=guildembed)
 

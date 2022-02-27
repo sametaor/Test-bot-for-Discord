@@ -8,6 +8,9 @@ async def node_connect(self):
     await wavelink.NodePool.create_node(bot = self.bot, host='lavalinkinc.ml', port=443, password='incognito', https=True)
 
 class Music(commands.Cog):
+    """Play music right on Discord!"""
+    COG_EMOJI = '🎶'
+    
     def __init__(self, bot):
         self.bot = bot
     

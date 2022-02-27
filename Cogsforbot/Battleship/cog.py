@@ -3,10 +3,12 @@ from discord.ext import commands
 import random
 
 class BattleShip(commands.Cog):
-
+	"""Play an intense game of Battleship on Discord!"""
+	COG_EMOJI = '⚓'
+	
 	def __init__(self, bot):
 		self.bot = bot
-
+	
 	@commands.command(help='Play battleship with a member.')
 	async def battleship(self, ctx, member:discord.Member):
 		

@@ -21,6 +21,9 @@ winningConditions = [
 ]
 
 class Tictactoe(commands.Cog, name="Tictactoe"):
+    """Play a relaxing game of Tictactoe on Discord!"""
+    COG_EMOJI = nextcord.PartialEmoji(name="tictactoe", id=947407376070373407, animated=False)
+    
     def __init__(self, bot):
         self.bot = bot
     
@@ -34,7 +37,7 @@ class Tictactoe(commands.Cog, name="Tictactoe"):
 
         if gameOver:
             global board
-            await ctx.send(embed = nextcord.Embed(title="To see what each square's number is type &board"))
+            await ctx.send(embed = nextcord.Embed(title="To see what each square's number is type &tttboard"))
             board = ["⬜", "⬜", "⬜",
                     "⬜", "⬜", "⬜",
                     "⬜", "⬜", "⬜"]

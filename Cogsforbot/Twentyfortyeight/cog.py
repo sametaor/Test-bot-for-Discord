@@ -1,12 +1,13 @@
 import os
-import discord
+import nextcord
 from Cogsforbot.Twentyfortyeight.Gamegrid import *
-from discord.ext import commands
+from nextcord.ext import commands
 from Cogsforbot.Twentyfortyeight.Events import *
 
 
 class TwentyFortyEight(commands.Cog):
-    """2048 game"""
+    """Play a 2048 game on Discord!"""
+    COG_EMOJI = nextcord.PartialEmoji(name="2048", id=947417027839156274, animated=False)
 
     def __init__(self, bot):
         self.bot = bot
@@ -15,7 +16,7 @@ class TwentyFortyEight(commands.Cog):
     @commands.cooldown(1, 3.0, type=commands.BucketType.user)
     async def _2048(self, ctx, args=None):
         if args is None:
-            embed = discord.Embed(title="2048 Help", colour=discord.Color.gold())
+            embed = nextcord.Embed(title="2048 Help", colour=nextcord.Color.gold())
             embed.add_field(name=">2048 start", value="Start 2048 game", inline=False)
             embed.add_field(name=">2048 stop", value="Stop game", inline=False)
             await ctx.send(embed=embed)
@@ -36,7 +37,7 @@ class TwentyFortyEight(commands.Cog):
             except Exception:
                 pass
 
-            embed = discord.Embed(title='2048', color=discord.Color.dark_theme())
+            embed = nextcord.Embed(title='2048', color=nextcord.Color.dark_theme())
             embed.set_image(url=str(img['link']))
             message = await ctx.send(embed=embed)
 
@@ -63,14 +64,14 @@ class TwentyFortyEight(commands.Cog):
                 await message.delete()
 
                 game.stop()
-                embed = discord.Embed(title='Game Stopped', description='Your game session stopped successfully',
-                                    color=discord.Color.orange())
+                embed = nextcord.Embed(title='Game Stopped', description='Your game session stopped successfully',
+                                    color=nextcord.Color.orange())
                 embed.set_image(url=str(img['link']))
                 await ctx.send(embed=embed)
                 return
 
-            embed = discord.Embed(title='Error', description='You haven\'t started a game yet.',
-                                color=discord.Color.red())
+            embed = nextcord.Embed(title='Error', description='You haven\'t started a game yet.',
+                                color=nextcord.Color.red())
             await ctx.send(embed=embed)
 
 

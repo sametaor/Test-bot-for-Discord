@@ -6,6 +6,9 @@ from nextcord import Spotify, Member
 from nextcord.ext import commands
 
 class Information(commands.Cog):
+    """Get detailed stats for Discord"""
+    COG_EMOJI = 'ℹ'
+    
     def __init__(self, bot):
         self.bot = bot
     

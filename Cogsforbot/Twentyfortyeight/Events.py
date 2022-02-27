@@ -1,6 +1,6 @@
 import os
-import discord
-from discord.ext import commands
+import nextcord
+from nextcord.ext import commands
 from dotenv.main import load_dotenv
 from Cogsforbot.Twentyfortyeight.Gamegrid import *
 from imgurpython import ImgurClient
@@ -52,7 +52,7 @@ class Events:
 
                 await message.remove_reaction(reaction, user)
 
-                embed = discord.Embed(title='2048', color=discord.Color.dark_theme())
+                embed = nextcord.Embed(title='2048', color=nextcord.Color.dark_theme())
                 embed.set_image(url=str(img['link']))
                 message = await message.edit(embed=embed)
 

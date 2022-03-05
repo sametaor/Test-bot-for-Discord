@@ -70,7 +70,8 @@ class Information(commands.Cog):
                 userembed.set_thumbnail(url=target.avatar.url)
             if target2.banner != None:
                 userembed.set_image(url=target2.banner)
-            userembed.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name}")
+            if ctx.author.avatar != None:
+                userembed.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name}")
             await ctx.send(embed=userembed)
     
     @commands.command(aliases=["bot"])

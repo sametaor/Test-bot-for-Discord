@@ -34,14 +34,8 @@ class Music(commands.Cog):
         await vc.play(next_song)
         await ctx.send(f"Now playing: {next_song.title}")
     
-    
-    @commands.group(invoke_without_command=True)
-    @commands.guild_only()
-    async  def play(self, ctx):
-        await ctx.send("Invalid sub-command passed.")
-    
-    @play.command()
-    async def track(self, ctx: commands.Context, *, search: wavelink.YouTubeTrack):
+    @commands.command()
+    async def play(self, ctx: commands.Context, *, search: wavelink.YouTubeTrack):
         if not ctx.voice_client:
             vc: wavelink.Player = await ctx.author.voice.channel.connect(cls=wavelink.Player)
         elif not getattr(ctx.author.voice, "channel", None):

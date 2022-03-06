@@ -10,6 +10,11 @@ class AIresponse(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
+    @commands.command()
+    async def say(ctx, statement=None):
+        await ctx.message.delete()
+        await ctx.send(statement)
+    
     @commands.Cog.listener()
     async def on_message(self, msg):
         testbot = self.bot
@@ -33,11 +38,6 @@ class AIresponse(commands.Cog):
             r=r.replace('"}', '')
             print(r)
             await msg.reply(str(r))
-    
-    @commands.command
-    async def say(ctx, statement=None):
-        await ctx.message.delete()
-        await ctx.send(statement)
 
 def setup(bot):
     bot.add_cog(AIresponse(bot))

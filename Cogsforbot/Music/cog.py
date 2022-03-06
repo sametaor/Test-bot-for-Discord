@@ -33,7 +33,8 @@ class Music(commands.Cog):
         next_song = vc.queue.get()
         await vc.play(next_song)
         await ctx.send(f"Now playing: {next_song.title}")
-        
+    
+    
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
     async  def play(self, ctx):

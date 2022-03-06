@@ -41,10 +41,8 @@ class Music(commands.Cog):
     async def play(self, ctx: commands.Context, *, search: wavelink.YouTubeTrack):
         if not ctx.voice_client:
             vc: wavelink.Player = await ctx.author.voice.channel.connect(cls=wavelink.Player)
-        elif not ctx.author.voice:
-            return await ctx.send("Please join a Voice Channel first, and then type '&play <track>'")
-        elif not ctx.author.voice == ctx.me.voice:
-            return await ctx.send("Please join the same Voice Channel first, and then type '&play <track>'")
+        elif not getattr(ctx.author.voice, "channel", None):
+            return await ctx.send("you have to be in a Voice Channel!")
         else:
             vc: wavelink.Player = ctx.voice_client
         
@@ -65,10 +63,8 @@ class Music(commands.Cog):
     async def pause(self, ctx: commands.Context):
         if not ctx.voice_client:
             return await ctx.send("There is nothing playing right now")
-        elif not ctx.author.voice:
-            return await ctx.send("Please join a Voice Channel first, and then type '&pause'")
-        elif not ctx.author.voice == ctx.me.voice:
-            return await ctx.send("Please join the same Voice Channel first, and then type '&pause'")
+        elif not getattr(ctx.author.voice, "channel", None):
+            return await ctx.send("you have to be in a Voice Channel!")
         else:
             vc: wavelink.Player = ctx.voice_client
         
@@ -79,10 +75,8 @@ class Music(commands.Cog):
     async def resume(self, ctx: commands.Context):
         if not ctx.voice_client:
             return await ctx.send("There is nothing playing right now")
-        elif not ctx.author.voice:
-            return await ctx.send("Please join a Voice Channel first, and then type '&resume'")
-        elif not ctx.author.voice == ctx.me.voice:
-            return await ctx.send("Please join the same Voice Channel first, and then type '&resume'")
+        elif not getattr(ctx.author.voice, "channel", None):
+            return await ctx.send("you have to be in a Voice Channel!")
         else:
             vc: wavelink.Player = ctx.voice_client
         
@@ -93,10 +87,8 @@ class Music(commands.Cog):
     async def stop(self, ctx: commands.Context):
         if not ctx.voice_client:
             return await ctx.send("There is nothing playing right now")
-        elif not ctx.author.voice:
-            return await ctx.send("Please join a Voice Channel first, and then type '&stop'")
-        elif not ctx.author.voice == ctx.me.voice:
-            return await ctx.send("Please join the same Voice Channel first, and then type '&stop'")
+        elif not getattr(ctx.author.voice, "channel", None):
+            return await ctx.send("you have to be in a Voice Channel!")
         else:
             vc: wavelink.Player = ctx.voice_client
         
@@ -107,10 +99,8 @@ class Music(commands.Cog):
     async def disconnect(self, ctx: commands.Context):
         if not ctx.voice_client:
             return await ctx.send("There is nothing playing right now")
-        elif not ctx.author.voice:
-            return await ctx.send("Please join a Voice Channel first, and then type '&disconnect'")
-        elif not ctx.author.voice == ctx.me.voice:
-            return await ctx.send("Please join the same Voice Channel first, and then type '&disconnect'")
+        elif not getattr(ctx.author.voice, "channel", None):
+            return await ctx.send("you have to be in a Voice Channel!")
         else:
             vc: wavelink.Player = ctx.voice_client
         
@@ -121,10 +111,8 @@ class Music(commands.Cog):
     async def volume(self, ctx: commands.Context, volumevalue = None):
         if not ctx.voice_client:
             return await ctx.send("There is nothing playing right now")
-        elif not ctx.author.voice:
-            return await ctx.send("Please join a Voice Channel first, and then type '&volume <value between 0-1000>'")
-        elif not ctx.author.voice == ctx.me.voice:
-            return await ctx.send("Please join the same Voice Channel first, and then type '&volume <value between 0-1000>'")
+        elif not getattr(ctx.author.voice, "channel", None):
+            return await ctx.send("you have to be in a Voice Channel!")
         else:
             vc: wavelink.Player = ctx.voice_client
         
@@ -135,10 +123,8 @@ class Music(commands.Cog):
     async def loop(self, ctx: commands.Context):
         if not ctx.voice_client:
             return await ctx.send("There is nothing playing right now")
-        elif not ctx.author.voice:
-            return await ctx.send("Please join a Voice Channel first, and then type '&loop'")
-        elif not ctx.author.voice == ctx.me.voice:
-            return await ctx.send("Please join the same Voice Channel first, and then type '&loop'")
+        elif not getattr(ctx.author.voice, "channel", None):
+            return await ctx.send("you have to be in a Voice Channel!")
         else:
             vc: wavelink.Player = ctx.voice_client
         
@@ -157,10 +143,8 @@ class Music(commands.Cog):
     async def queue(self, ctx: commands.Context):
         if not ctx.voice_client:
             return await ctx.send("There is nothing playing right now")
-        elif not ctx.author.voice:
-            return await ctx.send("Please join a Voice Channel first, and then type '&queue'")
-        elif not ctx.author.voice == ctx.me.voice:
-            return await ctx.send("Please join the same Voice Channel first, and then type '&queue'")
+        elif not getattr(ctx.author.voice, "channel", None):
+            return await ctx.send("you have to be in a Voice Channel!")
         else:
             vc: wavelink.Player = ctx.voice_client
         

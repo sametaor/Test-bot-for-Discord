@@ -40,7 +40,7 @@ class Music(commands.Cog):
     @commands.command()
     async def play(self, ctx: commands.Context, *, search: wavelink.YouTubeTrack):
         if not ctx.voice_client:
-            return await ctx.send("There is nothing playing right now")
+            vc: wavelink.Player = await ctx.author.voice.channel.connect(cls=wavelink.Player)
         elif not ctx.author.voice:
             return await ctx.send("Please join a Voice Channel first, and then type '&play <track>'")
         elif not ctx.author.voice == ctx.me.voice:

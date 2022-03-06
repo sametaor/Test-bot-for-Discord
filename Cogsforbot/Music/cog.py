@@ -48,7 +48,7 @@ class Music(commands.Cog):
         else:
             vc: wavelink.Player = ctx.voice_client
         
-        if vc.queue.is_empty and not vc.is_playing:
+        if vc.queue.is_empty and not vc.is_playing():
             await vc.play(search)
             conversion = datetime.timedelta(seconds=search.duration)
             musicduration = str(conversion)

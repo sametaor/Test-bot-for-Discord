@@ -36,11 +36,9 @@ class AIresponse(commands.Cog):
         await testbot.process_commands(msg)
     
     @commands.command()
-    async def say(ctx, *, statement=None):
-        try:
-            await ctx.send(statement)
-        except statement == None:
-            await ctx.send("Please Give Some Message!")
+    async def say(self, ctx, *, statement=None):
+        await ctx.message.delete()
+        await ctx.send(statement)
 
 def setup(bot):
     bot.add_cog(AIresponse(bot))

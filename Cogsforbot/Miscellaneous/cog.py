@@ -33,10 +33,9 @@ class AIresponse(commands.Cog):
             r=r.replace('"}', '')
             print(r)
             await msg.reply(str(r))
-        await testbot.process_commands(msg)
     
     @commands.command
-    async def say(ctx, statement):
+    async def say(ctx, statement=None):
         await ctx.message.delete()
         await ctx.send(statement)
 

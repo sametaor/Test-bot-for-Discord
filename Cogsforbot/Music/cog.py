@@ -59,7 +59,7 @@ class Music(commands.Cog):
             await vc.queue.put_wait(search)
             await ctx.send(f"Added `{search.title}` to the queue :)")
         vc.ctx = ctx
-        setattr(vc, "loop", False)
+        vc.loop = False
 
     @commands.command()
     async def pause(self, ctx: commands.Context):
@@ -143,14 +143,15 @@ class Music(commands.Cog):
             vc: wavelink.Player = ctx.voice_client
         
         try:
-            vc.loop ^= True
+            vc.loop = True
         except:
             setattr(vc, "loop", False)
         
         if vc.loop:
             return await ctx.send("Loop is now enabled!")
         else:
-            return await ctx.send("Loop is now disabled!")
+            vc.loop = False
+            return await ctx.send("Loop is now disabled")
     
     @commands.command()
     async def queue(self, ctx: commands.Context):

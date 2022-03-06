@@ -51,7 +51,7 @@ class Music(commands.Cog):
             musicembed.set_thumbnail(url=search.thumb)
             await ctx.send(embed=musicembed)
         else:
-            vc.queue.put_wait(search)
+            await vc.queue.put_wait(search)
             await ctx.send(f"Added `{search.title}` to the queue :)")
         vc.ctx = ctx
         setattr(vc, "loop", False)

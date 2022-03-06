@@ -37,8 +37,11 @@ class AIresponse(commands.Cog):
     
     @commands.command()
     async def say(self, ctx, *, statement=None):
-        await ctx.message.delete()
-        await ctx.send(statement)
+        if statement != None:
+            await ctx.message.delete()
+            await ctx.send(statement)
+        else:
+            await ctx.send("Please write the statement that is to be said")
 
 def setup(bot):
     bot.add_cog(AIresponse(bot))

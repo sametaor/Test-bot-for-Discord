@@ -127,11 +127,7 @@ class Music(commands.Cog):
             return await ctx.send("you have to be in a Voice Channel!")
         else:
             vc: wavelink.Player = ctx.voice_client
-        
-        try:
-            vc.loop = True
-        except:
-            setattr(vc, "loop", False)
+        vc.loop = True
         
         if vc.loop:
             return await ctx.send("Loop is now enabled!")

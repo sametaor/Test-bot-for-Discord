@@ -35,7 +35,6 @@ class Music(commands.Cog):
             await vc.play(next_song)
             await ctx.send(f"now playing {next_song.title}")
         elif player.queue.is_empty:
-            await vc.queue.get_wait(next_song)
             await ctx.send("Queue is empty") 
         
     @commands.command()
@@ -55,6 +54,7 @@ class Music(commands.Cog):
             musicembed.set_thumbnail(url=search.thumb)
             await ctx.send(embed=musicembed)
         else:
+            await vc.queue.get_wait(search)
             await vc.queue.put_wait(search)
             await ctx.send(f"Added `{search.title}` to the queue :)")
         vc.ctx = ctx

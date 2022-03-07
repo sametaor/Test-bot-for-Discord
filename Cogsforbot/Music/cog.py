@@ -34,7 +34,8 @@ class Music(commands.Cog):
             next_song = vc.queue.get()
             await vc.play(next_song)
             await ctx.send(f"now playing {next_song.title}")
-        else:
+        elif player.queue.is_empty:
+            await vc.queue.get_wait(next_song)
             await ctx.send("Queue is empty") 
         
     @commands.command()

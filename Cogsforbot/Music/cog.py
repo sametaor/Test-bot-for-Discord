@@ -120,20 +120,23 @@ class Music(commands.Cog):
         await ctx.send(f"Changing Volume to `{volumevalue}`...")
     
     @commands.command()
-    async def loop(self, ctx: commands.Context):
+    async def loop(ctx:commands.Context):
         if not ctx.voice_client:
-            return await ctx.send("There is nothing playing right now")
+            return await ctx.send('There is nothing playing right now')
         elif not getattr(ctx.author.voice, "channel", None):
-            return await ctx.send("you have to be in a Voice Channel!")
+            return await ctx.send('you have to be in a Voice Channel!')
         else:
             vc: wavelink.Player = ctx.voice_client
-        vc.loop = True
         
+        try:
+            vc.loop ^= True
+        except Exception:
+            setattr(vc, "loop", False)
         if vc.loop:
-            return await ctx.send("Loop is now enabled!")
+            return await ctx.send("Looping is enabled")
         else:
-            vc.loop = False
-            return await ctx.send("Loop is now disabled")
+            return await ctx.send("Looping is disabled")
+        vc.ctx = ctx
     
     @commands.command()
     async def queue(self, ctx: commands.Context):

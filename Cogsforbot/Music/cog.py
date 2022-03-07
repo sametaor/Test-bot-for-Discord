@@ -27,8 +27,8 @@ class Music(commands.Cog):
         ctx = player.ctx
         vc: player = ctx.voice_client
 
-        #if vc.loop:
-        #    return await vc.play(track)
+        if vc.loop:
+            return await vc.play(track)
 
         if not player.queue.is_empty:
             next_song = vc.queue.get()

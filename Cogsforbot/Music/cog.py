@@ -120,7 +120,7 @@ class Music(commands.Cog):
         await ctx.send(f"Changing Volume to `{volumevalue}`...")
     
     @commands.command()
-    async def loop(ctx:commands.Context):
+    async def loop(self, ctx:commands.Context):
         if not ctx.voice_client:
             return await ctx.send('There is nothing playing right now')
         elif not getattr(ctx.author.voice, "channel", None):

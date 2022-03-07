@@ -53,9 +53,10 @@ class Music(commands.Cog):
             musicembed = nextcord.Embed(title="Now Playing", description=f"Song: [{search.title}]({search.uri})\n Artist: `{search.author}`\n Duration: `{musicduration}`")
             musicembed.set_thumbnail(url=search.thumb)
             await ctx.send(embed=musicembed)
-        else:
+        elif not vc.queue.is_empty and not vc.is_playing:
             await vc.queue.put_wait(search)
             await ctx.send(f"Added `{search.title}` to the queue :)")
+            await vc.play(search)
         vc.ctx = ctx
         setattr(vc, "loop", False)
 
@@ -156,9 +157,6 @@ class Music(commands.Cog):
         for song in queue:
             song_count += 1
             em.add_field(name=f"Song Num {song_count}", value=f"`{song.title}`")
-            if song_count == 0:
-                vc.queue.get_wait(song)
-        
         return await ctx.send(embed=em)
 
 def setup(bot):

@@ -54,7 +54,6 @@ class Music(commands.Cog):
             musicembed.set_thumbnail(url=search.thumb)
             await ctx.send(embed=musicembed)
         else:
-            await vc.queue.get_wait(search)
             await vc.queue.put_wait(search)
             await ctx.send(f"Added `{search.title}` to the queue :)")
         vc.ctx = ctx
@@ -157,6 +156,8 @@ class Music(commands.Cog):
         for song in queue:
             song_count += 1
             em.add_field(name=f"Song Num {song_count}", value=f"`{song.title}`")
+            if song_count == 0:
+                vc.queue.get_wait(song)
         
         return await ctx.send(embed=em)
 

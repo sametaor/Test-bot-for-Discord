@@ -23,12 +23,12 @@ class Music(commands.Cog):
         print(f"Node {node.identifier} is ready!")
     
     @commands.Cog.listener()
-    async def on_wavelink_track_end(self, player: wavelink.Player, track: wavelink.Track, reason):
+    async def on_wavelink_track_end(player: wavelink.Player, track: wavelink.Track, reason):
         ctx = player.ctx
         vc = wavelink.Player
 
         #if vc.loop:
-            #return await vc.play(track)
+        #    return await vc.play(track)
 
         if not player.queue.is_empty:
             next_song = vc.queue.get()
@@ -36,7 +36,7 @@ class Music(commands.Cog):
             await ctx.send(f"now playing {next_song.title}")
         else:
             await ctx.send("Queue is empty") 
-    
+        
     @commands.command()
     async def play(self, ctx: commands.Context, *, search: wavelink.YouTubeTrack):
         if not ctx.voice_client:
@@ -57,7 +57,7 @@ class Music(commands.Cog):
             await vc.queue.put_wait(search)
             await ctx.send(f"Added `{search.title}` to the queue :)")
         vc.ctx = ctx
-        vc.loop = False
+        setattr(vc, "loop", False)
 
     @commands.command()
     async def pause(self, ctx: commands.Context):
@@ -136,7 +136,7 @@ class Music(commands.Cog):
             return await ctx.send("Looping is enabled")
         else:
             return await ctx.send("Looping is disabled")
-        vc.ctx = ctx
+            vc.loop = False
     
     @commands.command()
     async def queue(self, ctx: commands.Context):

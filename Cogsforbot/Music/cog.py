@@ -35,7 +35,7 @@ class Music(commands.Cog):
             await vc.play(next_song)
             await ctx.send(f"now playing {next_song.title}")
         elif player.queue.is_empty:
-            await ctx.send("Queue is empty") 
+            await ctx.send("Queue is empty(event/listener error msg)") 
         
     @commands.command()
     async def play(self, ctx: commands.Context, *, search: wavelink.YouTubeTrack):
@@ -148,7 +148,7 @@ class Music(commands.Cog):
             vc: wavelink.Player = ctx.voice_client
         
         if vc.queue.is_empty:
-            return await ctx.send("Queue is empty!")
+            return await ctx.send("Queue is empty!(command error)")
         
         em = nextcord.Embed(title="Queue")
         queue = vc.queue.copy()

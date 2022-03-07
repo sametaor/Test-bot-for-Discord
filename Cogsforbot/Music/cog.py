@@ -35,7 +35,8 @@ class Music(commands.Cog):
             await vc.play(next_song)
             await ctx.send(f"now playing {next_song.title}")
         elif player.queue.is_empty:
-            await ctx.send("Queue is empty(event/listener error msg)") 
+            await ctx.send("Queue is empty(event/listener error msg)")
+            await vc.queue.get_wait()
         
     @commands.command()
     async def play(self, ctx: commands.Context, *, search: wavelink.YouTubeTrack):

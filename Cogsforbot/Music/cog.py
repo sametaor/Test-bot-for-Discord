@@ -25,7 +25,7 @@ class Music(commands.Cog):
     @commands.Cog.listener()
     async def on_wavelink_track_end(self, player: wavelink.Player, track: wavelink.Track, reason):
         ctx = player.ctx
-        vc = wavelink.Player
+        vc: player = ctx.voice_client
 
         #if vc.loop:
         #    return await vc.play(track)

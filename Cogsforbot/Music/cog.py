@@ -5,8 +5,7 @@ from nextcord.ext import commands
 
 async def node_connect(self):
     await self.bot.wait_until_ready()
-    await wavelink.NodePool.create_node(bot = self.bot, host='disbotlistlavalink.ml', port=443, password='LAVA', https=True)
-
+    await wavelink.NodePool.create_node(bot = self.bot, host='lavalink.ml', port=443, password='incognito', https=True)
 class Music(commands.Cog):
     """Play music right on Discord!"""
     COG_EMOJI = '🎶'

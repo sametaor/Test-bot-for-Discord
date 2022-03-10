@@ -39,7 +39,8 @@ class AIresponse(commands.Cog):
     async def say(self, ctx, *, statement=None):
         if statement != None:
             await ctx.message.delete()
-            await ctx.send(statement.clean_content)
+            msg = statement.clean_content
+            await ctx.send(msg)
         else:
             await ctx.send("Please write the statement that is to be said")
 

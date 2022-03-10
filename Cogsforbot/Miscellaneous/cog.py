@@ -39,11 +39,9 @@ class AIresponse(commands.Cog):
     async def say(self, ctx, *, statement=None):
         if statement != None:
             await ctx.message.delete()
-            await ctx.send(statement)
+            await ctx.send(statement.clean_content)
         else:
             await ctx.send("Please write the statement that is to be said")
-        if "@" in statement.content or nextcord.Role.mention in statement.content or statement.mention_everyone == True or nextcord.Member.mention in statement.content:
-            await ctx.send(f"Don't ping anyone using the say command, {ctx.author.mention}")
 
 def setup(bot):
     bot.add_cog(AIresponse(bot))

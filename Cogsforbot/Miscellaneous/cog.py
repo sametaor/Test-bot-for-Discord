@@ -36,11 +36,10 @@ class AIresponse(commands.Cog):
         await testbot.process_commands(msg)
     
     @commands.command()
-    async def say(self, ctx, *, statement=None):
+    async def say(self, ctx, *, statement: commands.clean_content =None):
         if statement != None:
             await ctx.message.delete()
-            msg = statement.clean_content()
-            await ctx.send(msg)
+            await ctx.send(statement)
         else:
             await ctx.send("Please write the statement that is to be said")
 

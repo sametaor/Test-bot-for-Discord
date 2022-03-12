@@ -11,10 +11,10 @@ class Activities(commands.Cog):
         self.bot = bot
     
     @commands.group(invoke_without_command=True)
-    async def play(ctx):
+    async def activityplay(ctx):
         return
     
-    @play.command()
+    @activityplay.command()
     async def sketch(ctx, channel: nextcord.VoiceChannel = None):
         if channel == None:
             return await ctx.send("Please specify a channel to join/create a game")

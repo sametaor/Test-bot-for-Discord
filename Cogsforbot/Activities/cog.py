@@ -170,18 +170,5 @@ class Activities(commands.Cog):
         sketchembed.set_thumbnail(url="https://i.imgur.com/KAg60qh.png")
         await ctx.send(embed=sketchembed, view=MakeLinkBtn(invite_link))
 
-    @activityplay.command()
-    async def doodle(self, ctx, channel: nextcord.VoiceChannel = None):
-        if channel == None:
-            return await ctx.send("Please specify a channel to join/create a game")
-        try:
-            invite_link =  await channel.create_activity_invite(activities.Activity.doodle)
-        except nextcord.HTTPException:
-            return await ctx.send("Please mention a voice channel to join/create a game")
-        sketchembed = nextcord.Embed(title="Doodle game", description=f"{ctx.author.mention} has created a game in {channel.mention}")
-        sketchembed.add_field(name="How to Play?", value="Play a game of Doodle with your friends in a Voice Channel!")
-        sketchembed.set_thumbnail(url="https://i.imgur.com/KAg60qh.png")
-        await ctx.send(embed=sketchembed, view=MakeLinkBtn(invite_link))
-
 def setup(bot):
     bot.add_cog(Activities(bot))

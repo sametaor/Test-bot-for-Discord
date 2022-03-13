@@ -24,7 +24,7 @@ class MemeGen(commands.Cog, name="Meme Generation"):
         await ctx.send(file = nextcord.File("profile.jpg"))
     
     @commands.command()
-    async def society(self, ctx, text=None):
+    async def society(self, ctx, *, text=None):
         if text == None:
             text = "Put a statement here to add to the meme by typing '&society <statement>'"
         

@@ -13,7 +13,7 @@ class MemeGen(commands.Cog, name="Meme Generation"):
             user = ctx.author
         
         wanted = Image.open("Cogsforbot/ImageManipulation/Wanted.jpg")
-        asset = user.avatar.url.with_size(128)
+        asset = user.avatar.with_size(128)
         
         data = BytesIO(await asset.read())
         pfp = Image.open(data)

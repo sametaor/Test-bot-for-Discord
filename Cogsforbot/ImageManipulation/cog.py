@@ -26,7 +26,7 @@ class MemeGen(commands.Cog, name="Meme Generation"):
     @commands.command()
     async def society(self, ctx, text=None):
         if text == None:
-            statement = "Put a statement here to add to the meme by typing '&society <statement>'"
+            text = "Put a statement here to add to the meme by typing '&society <statement>'"
         
         img = Image.open("Cogsforbot/ImageManipulation/Society.jpg")
         draw = ImageDraw.Draw(img)

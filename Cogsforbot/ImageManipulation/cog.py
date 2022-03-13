@@ -19,7 +19,7 @@ class MemeGen(commands.Cog, name="Meme Generation"):
         pfp = Image.open(data)
         
         pfp.resize((283,283))
-        wanted.paste(pfp, (96,230))
+        wanted.paste(pfp, (107,240))
         wanted.save("profile.jpg")
         await ctx.send(file = nextcord.File("profile.jpg"))
     

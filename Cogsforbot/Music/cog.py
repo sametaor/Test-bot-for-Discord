@@ -157,6 +157,22 @@ class Music(commands.Cog):
             song_count += 1
             em.add_field(name=f"Song Num {song_count}", value=f"`{song.title}`")
         return await ctx.send(embed=em)
-
+    
+    @commands.command()
+    async def nowplaying(self, ctx: commands.Context):
+        if not ctx.voice_client:
+            return await ctx.send("There is nothing playing right now")
+        elif not getattr(ctx.author.voice, "channel", None):
+            return await ctx.send("you have to be in a Voice Channel!")
+        else:
+            vc: wavelink.Player = ctx.voice_client
+        
+        if not vc.is_playing():
+            return await ctx.send("Nothing is playing right now.")
+        
+        nowplayingembed  = nextcord.Embed(title=f"Now Playing {vc.track.title}", description=f"Artist {vc.track.artist}", url=vc.track.uri)
+        nowplayingembed.add_field(name="Duration", value=f"`{str(datetime.timedelta(seconds=vc.track.length))}`")
+        await ctx.send(embed=nowplayingembed)
+    
 def setup(bot):
     bot.add_cog(Music(bot))

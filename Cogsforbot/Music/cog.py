@@ -1,11 +1,20 @@
 import wavelink
 import nextcord
 import datetime
+import os
 from nextcord.ext import commands
+from wavelink.ext import spotify
+from dotenv.main import load_dotenv
+
+load_dotenv()
+
+spotifyclientid = os.getenv('SPOTIFYCLIENTID')
+spotifyclientsecret = os.getenv('SPOTIFYCLIENTSECRET')
 
 async def node_connect(self):
     await self.bot.wait_until_ready()
-    await wavelink.NodePool.create_node(bot = self.bot, host='lavalinkinc.ml', port=443, password='incognito', https=True)
+    await wavelink.NodePool.create_node(bot = self.bot, host='lavalinkinc.ml', port=443, password='incognito', https=True, spotify_client=spotify.SpotifyClient(client_id=spotifyclientid, client_secret=spotifyclientsecret))
+
 class Music(commands.Cog):
     """Play music right on Discord!"""
     COG_EMOJI = '🎶'
@@ -173,6 +182,35 @@ class Music(commands.Cog):
         nowplayingembed  = nextcord.Embed(title=f"Now Playing {vc.track.title}", description=f"Artist {vc.track.artist}", url=f"{vc.track.uri}")
         nowplayingembed.add_field(name="Duration", value=f"`{str(datetime.timedelta(seconds=vc.track.length))}`")
         await ctx.send(embed=nowplayingembed)
+    
+    @commands.command()
+    async def spotiplay(self, ctx:commands.Context, *, search: str):
+        if not ctx.voice_client:
+            vc: wavelink.Player = await ctx.author.voice.channel.connect(cls=wavelink.Player)
+        elif not getattr(ctx.author.voice, "channel", None):
+            return await ctx.send("you have to be in a Voice Channel!")
+        else:
+            vc: wavelink.Player = ctx.voice_client
+        
+        if vc.queue.is_empty and not vc.is_playing():
+            try:
+                track = await spotify.SpotifyTrack.search(query=search, return_first=True)
+                await vc.play(track)
+                conversion = datetime.timedelta(seconds=track.duration)
+                musicduration = str(conversion)
+                musicembed = nextcord.Embed(title="Now Playing", description=f"Song: [{track.title}]({track.uri})\n Artist: `{track.author}`\n Duration: `{musicduration}`")
+                musicembed.set_thumbnail(url=track.thumb)
+                await ctx.send(embed=musicembed)
+            except Exception as e:
+                await ctx.send("Please enter a Spotify song url")
+                return print(e)
+        else:
+            await vc.queue.put_wait(search)
+            await ctx.send(f"Added `{search.title}` to the queue :)")
+        vc.ctx = ctx
+        if vc.loop:
+            return
+        setattr(vc, "loop", False)
     
 def setup(bot):
     bot.add_cog(Music(bot))

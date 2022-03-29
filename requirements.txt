@@ -27,7 +27,7 @@ prsaw==0.4.0
 pyfiglet==0.8.post1
 python-dotenv==0.19.2
 PyYAML==6.0
-reportlab==3.6.6
+reportlab==3.6.9
 requests==2.27.1
 rfc3986==2.0.0
 sniffio==1.2.0

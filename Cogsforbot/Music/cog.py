@@ -179,7 +179,7 @@ class Music(commands.Cog):
         if not vc.is_playing():
             return await ctx.send("Nothing is playing right now.")
         
-        nowplayingembed  = nextcord.Embed(title=f"Now Playing {vc.track.title}", description=f"Artist {vc.track.artist}", url=f"{vc.track.uri}")
+        nowplayingembed  = nextcord.Embed(title=f"Now Playing {vc.track.title}", description=f"Artist {vc.track.author}", url=f"{vc.track.uri}")
         nowplayingembed.add_field(name="Duration", value=f"`{str(datetime.timedelta(seconds=vc.track.length))}`")
         await ctx.send(embed=nowplayingembed)
     

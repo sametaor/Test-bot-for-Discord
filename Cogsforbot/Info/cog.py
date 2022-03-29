@@ -13,7 +13,7 @@ class Information(commands.Cog):
         self.bot = bot
     
     @commands.command(pass_context=True)
-    async def ping(ctx):
+    async def ping(self, ctx):
         """ Pong! """
         before = time.monotonic()
         pingembed = nextcord.Embed(title="Pong!🏓", description="", colour=nextcord.Colour.blue())

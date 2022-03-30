@@ -13,6 +13,4 @@ updates:
       - "sametaor"
     ignore:
       - dependency-name: "h11"
-        versions: ["0.11"]
       - dependency-name: "httpx"
-        versions: ["0.16.1"]

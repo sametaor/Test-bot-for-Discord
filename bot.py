@@ -289,4 +289,8 @@ for folder in os.listdir("Cogsforbot"):
         testbot.load_extension(f"Cogsforbot.{folder}.cog")
 
 DISCORD_TOKEN = os.getenv("TOKEN")
-testbot.run(DISCORD_TOKEN)
+try:
+    testbot.run(DISCORD_TOKEN)
+except:
+    if testbot.is_ws_ratelimited == True:
+        print("The bot is ratelimited currently, please wait for the ratelimit to be removed after a few hours")

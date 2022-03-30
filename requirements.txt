@@ -15,7 +15,7 @@ httpx==0.22.0
 idna==3.3
 imgurpython==1.1.7
 instant-api-client==0.1.2
-lxml==4.7.1
+lxml==4.8.0
 multidict==6.0.2
 nextcord==2.0.0a10
 nextcord-ext-activities==2022.3.14

@@ -156,7 +156,7 @@ async def on_message(msg):
 @testbot.event
 async def on_command_error(ctx,error):
     if isinstance(error,commands.MissingPermissions):
-        await ctx.send("You are missing the required permissions to do that.")
+        await ctx.send(nextcord.Embed(title="You are missing the following required permissions to do that: ", description='\n'.join(error.missing_permissions)))
     elif isinstance(error,commands.CommandNotFound):
         if ctx.message.content.startswith("&weather"):
             pass
@@ -171,13 +171,13 @@ async def on_command_error(ctx,error):
         else:
             await ctx.send("That command does not exist")
     elif isinstance(error,commands.MissingRequiredArgument):
-        await ctx.send("Please enter the required arguments")
+        await ctx.send(f"You are missing a required argument: `{error.param}`")
     elif isinstance(error,commands.BadArgument):
         await ctx.send("Please enter the correct arguments")
     elif isinstance(error,commands.BotMissingPermissions):
         await ctx.send("I don't have the required permissions to perform that")
     elif isinstance(error,commands.CommandOnCooldown):
-        await ctx.send("This command is still on cooldown")
+        await ctx.send(f"This command is still on cooldown for `{round(error.retry_after, 1)}`")
     elif isinstance(error,commands.TooManyArguments):
         await ctx.send("You have sent too many arguments, please send the specified number of arguments only")
     elif isinstance(error,commands.MissingAnyRole):

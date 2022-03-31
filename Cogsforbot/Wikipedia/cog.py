@@ -27,7 +27,7 @@ class Wikipedia(commands.Cog):
     
 
     @commands.command(name='wiki', help='use &wiki <term> to easily get detailed information about any topic you like.')
-    async def wiki_search(self, ctx, *args):
+    async def wiki_search(self, ctx, *, args):
         wiki_wiki = wikipediaapi.Wikipedia('en')
 
         page_py = wiki_wiki.page(args)

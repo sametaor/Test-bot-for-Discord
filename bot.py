@@ -156,7 +156,7 @@ async def on_message(msg):
 @testbot.event
 async def on_command_error(ctx,error):
     if isinstance(error,commands.MissingPermissions):
-        await ctx.send(embed=nextcord.Embed(title="You are missing the following required permissions to do that: ", description='\n'.join(error.missing_permissions)))
+        await ctx.send(embed=nextcord.Embed(title="You are missing the following required permissions to do that: ", description='\n'.join(((str(error.missing_permissions)).title()).replace("_", " "))))
     elif isinstance(error,commands.CommandNotFound):
         if ctx.message.content.startswith("&weather"):
             pass
@@ -190,6 +190,32 @@ async def on_command_error(ctx,error):
     else:
         raise error
 
+
+@testbot.event
+async def cog_command_error(ctx,error):
+    if isinstance(error,commands.MissingPermissions):
+        await ctx.send(embed=nextcord.Embed(title="You are missing the following required permissions to do that: ", description='\n'.join(((str(error.missing_permissions)).title()).replace("_", " "))))
+    elif isinstance(error,commands.CommandNotFound):
+        await ctx.send("That command does not exist")
+    elif isinstance(error,commands.MissingRequiredArgument):
+        await ctx.send(f"You are missing a required argument: `{error.param}`")
+    elif isinstance(error,commands.BadArgument):
+        await ctx.send("Please enter the correct arguments")
+    elif isinstance(error,commands.BotMissingPermissions):
+        await ctx.send("I don't have the required permissions to perform that")
+    elif isinstance(error,commands.CommandOnCooldown):
+        await ctx.send(f"This command is still on cooldown for `{round(error.retry_after, 1)}`")
+    elif isinstance(error,commands.TooManyArguments):
+        await ctx.send("You have sent too many arguments, please send the specified number of arguments only")
+    elif isinstance(error,commands.MissingAnyRole):
+        await ctx.send("You don't have the required set of roles")
+    elif isinstance(error,commands.BotMissingAnyRole):
+        await ctx.send("I don't have the required set of roles for performing that")
+    elif isinstance(error, commands.DisabledCommand):
+        await ctx.send("This command has been disabled.")
+        return
+    else:
+        raise error
 
 @testbot.command(aliases=['8ball'])
 async def eightball(ctx, *, question):

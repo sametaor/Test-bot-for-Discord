@@ -194,7 +194,7 @@ async def on_command_error(ctx,error):
 @testbot.event
 async def cog_command_error(ctx,error):
     if isinstance(error,commands.MissingPermissions):
-        await ctx.send(embed=nextcord.Embed(title="You are missing the following required permissions to do that: ", description=f'\n'.join(f"{(perm[0])}".title() for perm in error.missing_permissions if perm[1]).replace("_", " ")))
+        await ctx.send(embed=nextcord.Embed(title="You are missing the following required permissions to do that: ", description=f'\n'.join(f"{(perm)}".title() for perm in error.missing_permissions if perm).replace("_", " ")))
     elif isinstance(error,commands.CommandNotFound):
         await ctx.send("That command does not exist")
     elif isinstance(error,commands.MissingRequiredArgument):

@@ -156,7 +156,7 @@ async def on_message(msg):
 @testbot.event
 async def on_command_error(ctx,error):
     if isinstance(error,commands.MissingPermissions):
-        await ctx.send(embed=nextcord.Embed(title="You are missing the following required permissions to do that: ", description=f'\n'.join(f"{(perm[0])}".title() for perm in error.missing_permissions if perm[1]).replace("_", " ")))
+        await ctx.send(embed=nextcord.Embed(title="You are missing the following required permissions to do that: ", description=f'\n'.join(f"{(perm)}".title() for perm in error.missing_permissions if perm).replace("_", " ")))
     elif isinstance(error,commands.CommandNotFound):
         if ctx.message.content.startswith("&weather"):
             pass

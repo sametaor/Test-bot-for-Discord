@@ -1,20 +1,14 @@
 import nextcord
 import asyncio
-import aiohttp
 import json
 import urllib
 import os
-import time
-from io import BytesIO
-from nextcord.enums import ChannelType
-from dotenv import load_dotenv
-from Cogsforbot.Twentyfortyeight.Events import Events
 import requests
 import random
-import datetime
-from nextcord import Member, Spotify
-from typing import Optional
-from nextcord.ext import commands, tasks
+import aiosqlite
+from dotenv import load_dotenv
+from Cogsforbot.Twentyfortyeight.Events import Events
+from nextcord.ext import commands, tasks, ipc
 from texttoowo import text_to_owo
 from redditmeme import reddit
 from itertools import cycle
@@ -22,12 +16,38 @@ from weatherassets import *
 from eightballresponses import outputs
 
 
-testbot = commands.Bot(command_prefix="&", intents=nextcord.Intents.all())
+async def getprefix(testbot, message):
+    async with aiosqlite.connect("prefixes.db") as db:
+        async with db.cursor() as cursor:
+            await cursor.execute('SELECT prefix FROM prefixes WHERE guild = ?', (message.guild.id,))
+            data = await cursor.fetchone()
+            if data:
+                return data
+            else:
+                return "&"
+
+
+
+class tachyonBot(commands.Bot):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.ipc = ipc.Server(self, secret_key="tachyonfirst")
+    
+    async def on_ipc_read(self):
+        print("IPC is ready!")
+    
+    async def on_ipc_error(self, endpoint, error):
+        print(endpoint, "raised", error)
+    
+    async def on_ready(self):
+        print("Ready!")
+
+
+
+testbot = tachyonBot(command_prefix="&", intents=nextcord.Intents.all())
 testbot.remove_command("help")
 
 load_dotenv('token.env')
-Button = nextcord.ui.Button
-ButtonStyle = nextcord.ButtonStyle
 
 status = cycle([
     'nextcord.py',
@@ -43,78 +63,6 @@ status = cycle([
     'Amogus',
     'Songs'
 ])
-EMOJIS_TO_USE_FOR_CALCULATOR = {"1":"1️⃣", "2":"2️⃣", "3":"3️⃣", "4":"4️⃣", "5":"5️⃣", "6":"6️⃣", "7":"7️⃣", "8":"8️⃣", "9":"9️⃣", "0":"0️⃣", "+":"➕", "-":"➖","x":"✖️","÷":"➗",".":"▫"}
-buttons = [
-    [
-        Button(style=ButtonStyle.grey, label='1'),
-        Button(style=ButtonStyle.grey, label='2'),
-        Button(style=ButtonStyle.grey, label='3'),
-        Button(style=ButtonStyle.blurple, label='x'),
-        Button(style=ButtonStyle.red, label='Exit')
-    ],
-    [
-        Button(style=ButtonStyle.grey, label='4'),
-        Button(style=ButtonStyle.grey, label='5'),
-        Button(style=ButtonStyle.grey, label='6'),
-        Button(style=ButtonStyle.blurple, label='÷'),
-        Button(style=ButtonStyle.red, label='←')
-    ],
-    [
-        Button(style=ButtonStyle.grey, label='7'),
-        Button(style=ButtonStyle.grey, label='8'),
-        Button(style=ButtonStyle.grey, label='9'),
-        Button(style=ButtonStyle.blurple, label='+'),
-        Button(style=ButtonStyle.red, label='Clear')
-    ],
-    [
-        Button(style=ButtonStyle.grey, label='00'),
-        Button(style=ButtonStyle.grey, label='0'),
-        Button(style=ButtonStyle.grey, label='.'),
-        Button(style=ButtonStyle.blurple, label='-'),
-        Button(style=ButtonStyle.green, label='=')
-    ],
-]
-
-disabled_buttons = [
-    [
-        Button(style=ButtonStyle.grey, label='1', disabled=True),
-        Button(style=ButtonStyle.grey, label='2', disabled=True),
-        Button(style=ButtonStyle.grey, label='3', disabled=True),
-        Button(style=ButtonStyle.blurple, label='x', disabled=True),
-        Button(style=ButtonStyle.red, label='Exit', disabled=True)
-    ],
-    [
-        Button(style=ButtonStyle.grey, label='4', disabled=True),
-        Button(style=ButtonStyle.grey, label='5', disabled=True),
-        Button(style=ButtonStyle.grey, label='6', disabled=True),
-        Button(style=ButtonStyle.blurple, label='÷', disabled=True),
-        Button(style=ButtonStyle.red, label='←', disabled=True)
-    ],
-    [
-        Button(style=ButtonStyle.grey, label='7', disabled=True),
-        Button(style=ButtonStyle.grey, label='8', disabled=True),
-        Button(style=ButtonStyle.grey, label='9', disabled=True),
-        Button(style=ButtonStyle.blurple, label='+', disabled=True),
-        Button(style=ButtonStyle.red, label='Clear', disabled=True)
-    ],
-    [
-        Button(style=ButtonStyle.grey, label='00', disabled=True),
-        Button(style=ButtonStyle.grey, label='0', disabled=True),
-        Button(style=ButtonStyle.grey, label='.', disabled=True),
-        Button(style=ButtonStyle.blurple, label='-', disabled=True),
-        Button(style=ButtonStyle.green, label='=', disabled=True)
-    ],
-]
-
-def calculator(exp):
-    o = exp.replace('x', '*')
-    o = o.replace('÷', '/')
-    result = ''
-    try:
-        result = str(eval(o))
-    except:
-        result = 'An error occured'
-    return result
 
 @tasks.loop(seconds=10)
 async def status_swap():
@@ -123,8 +71,16 @@ async def status_swap():
 
 @testbot.event
 async def on_ready():
-    print("Test bot ready to go")
+    print("Tachyon ready to roll")
     status_swap.start()
+    async with aiosqlite.connect("prefixes.db") as db:
+        async with db.cursor() as cursor:
+            await cursor.execute('CREATE TABLE IF NOT EXISTS prefixes (prefix TEXT, guild ID)')
+        await db.commit()
+    async with aiosqlite.connect("main.db") as db:
+        async with db.cursor() as cursor:
+            await cursor.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER , guild INTEGER)')
+        await db.commit()
 
 testbot.event(Events(testbot).on_reaction_add)
 
@@ -139,6 +95,25 @@ async def on_member_join(member):
 async def on_member_remove(member):
     channel = nextcord.utils.get(member.guild.channels, name='welcome')
     await channel.send(f"We will miss you, {member.mention}!")
+
+
+@testbot.event
+async def on_guild_join(guild):
+    async with aiosqlite.connect("prefixes.db") as db:
+        async with db.cursor() as cursor:
+            await cursor.execute('INSERT INTO prefixes (prefix, guild) VALUES (?, ?)', ('&', guild.id,))
+        await db.commit()
+
+
+@testbot.event
+async def on_guild_leave(guild):
+    async with aiosqlite.connect("prefixes.db") as db:
+        async with db.cursor() as cursor:
+            await cursor.execute('SELECT prefix FROM prefixes WHERE guild = ?', (guild.id,))
+            data = await cursor.fetchone()
+            if data:
+                await cursor.execute('DELETE FROM prefixes WHERE guild = ?', (guild.id,))
+        await db.commit()
 
 
 @testbot.event
@@ -310,9 +285,80 @@ async def coinflip(ctx):
     coin = random.choice(choices)
     await ctx.send(f"{coin}:coin:")
 
+@testbot.command()
+async def adduser(ctx, member: nextcord.Member):
+    member = ctx.author
+    async with aiosqlite.connect("main.db") as db:
+        async with db.cursor() as cursor:
+            await cursor.execute('SELECT id FROM users WHERE guild = ?', (ctx.guild.id,))
+            data = await cursor.fetchone()
+            if data:
+                await cursor.execute('UPDATE users SET id = ? WHERE guild = ?', (member.id, ctx.guild.id,))
+            else:
+                await cursor.execute('INSERT INTO users (id, guild) VALUES (?, ?)', (member.id, ctx.guild.id,))
+        await db.commit()
+
+@testbot.command()
+async def removeuser(ctx, member: nextcord.Member):
+    member = ctx.author
+    async with aiosqlite.connect("main.db") as db:
+        async with db.cursor() as cursor:
+            await cursor.execute('SELECT id FROM users WHERE guild = ?', (ctx.guild.id,))
+            data = await cursor.fetchone()
+            if data:
+                await cursor.execute('DELETE FROM users WHERE id = ? AND guild = ?', (member.id, ctx.guild.id,))
+    await db.commit()
+
+@testbot.command()
+async def setprefix(ctx, *, prefix=None):
+    if prefix is None:
+        return
+    
+    async with aiosqlite.connect("prefixes.db") as db:
+        async with db.cusror() as cursor:
+            await cursor.execute('SELECT prefix FROM prefixes WHERE guild = ?', (ctx.guild.id,))
+            data = await cursor.fetchone()
+            if data:
+                await cursor.execute('UPDATE prefixes set prefix = ? WHERE guild = ?', (prefix, ctx.guild.id,))
+                await ctx.send(f'Updated prefix to `{prefix}`')
+            else:
+                await cursor.execute('INSERT INTO prefixes (prefix, guild) VALUES (?, ?)', ('&', ctx.guild.id,))
+                if data:
+                    await cursor.execute('UPDATE prefixes set prefix = ? WHERE guild = ?', (prefix, ctx.guild.id,))
+                    await ctx.send(f'Updated prefix to `{prefix}`')
+                else:
+                    return
+        await db.commit()
+
 for folder in os.listdir("Cogsforbot"):
     if os.path.exists(os.path.join("Cogsforbot", folder, "cog.py")):
         testbot.load_extension(f"Cogsforbot.{folder}.cog")
+
+@testbot.ipc.route()
+async def get_guild_count(data):
+    return len(testbot.guilds)
+
+@testbot.ipc.route()
+async def get_guild_ids(data):
+    final = []
+    for guild in testbot.guilds:
+        final.append(guild.id)
+    return final
+
+@testbot.ipc.route()
+async def get_guild(data):
+    guild = testbot.get_guild(data.guild_id)
+    if guild is None:
+        return None
+    
+    guild_data = {
+        "name" : guild.name,
+        "id" : guild.id,
+        "prefix" : "&"
+    }
+    return guild_data
+
+testbot.ipc.start()
 
 DISCORD_TOKEN = os.getenv("TOKEN")
 try:

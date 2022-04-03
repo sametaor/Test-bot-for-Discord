@@ -1,6 +1,7 @@
 aiofiles==0.8.0
 aiohttp==3.8.1        
 aiosignal==1.2.0      
+aiosqlite==0.17.0     
 anyio==3.5.0
 Async-OAuthlib==0.0.9 
 async-timeout==4.0.2  
@@ -35,6 +36,7 @@ MarkupSafe==2.1.1
 multidict==6.0.2
 nextcord==2.0.0a10
 nextcord-ext-activities==2022.3.14
+nextcord-ext-ipc==2.2.1
 numpy==1.22.3
 oauthlib==3.2.0
 Pillow==9.1.0

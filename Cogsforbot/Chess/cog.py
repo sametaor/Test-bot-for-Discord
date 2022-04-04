@@ -1,8 +1,8 @@
 import asyncio
 import chess
 import chess.svg
-import nextcord
-from nextcord.ext import commands
+import discord
+from discord.ext import commands
 from reportlab.graphics import renderPM
 from svglib.svglib import svg2rlg
 from PIL import Image
@@ -16,7 +16,7 @@ class Chess(commands.Cog, name="Chess"):
         self.bot = bot
 
     @commands.command(name="chess")
-    async def start(self, ctx, *, user: nextcord.User):
+    async def start(self, ctx, *, user: discord.User):
         """Start a chess game with someone!"""
         await chess_loop(ctx.author, user, ctx, self.bot)  # Load the loop
 
@@ -27,9 +27,9 @@ def setup(bot):
 
 async def chess_loop(user1, user2, ctx, bot):
     # Chess loop
-    embed = nextcord.Embed(title=f"A Chess game started!",
+    embed = discord.Embed(title=f"A Chess game started!",
                         description=f"{user1.mention} is whites and {user2.mention} is blacks.",
-                        color=nextcord.Color.green())
+                        color=discord.Color.green())
     await ctx.send(embed=embed)
     # Initiate the board
     board = chess.Board()
@@ -44,7 +44,7 @@ async def chess_loop(user1, user2, ctx, bot):
     img = Image.open('chess_board.png')
     img.save('chess_board.png')
     # Send the chess board
-    await ctx.send(file=nextcord.File(fp="chess_board.png"))
+    await ctx.send(file=discord.File(fp="chess_board.png"))
     game_over = False
     while game_over is not True:
         # Loop until game is over or canceled. Yes this can be optimized but this was around the time he didnt pay
@@ -56,9 +56,9 @@ async def chess_loop(user1, user2, ctx, bot):
             return
         if game_over:
             # Check if game is over
-            embed = nextcord.Embed(title=f"Game over!",
+            embed = discord.Embed(title=f"Game over!",
                                 description=f"{user1.mention} won the game! GG",
-                                color=nextcord.Color.green())
+                                color=discord.Color.green())
             await ctx.send(embed=embed)
             return
 
@@ -68,9 +68,9 @@ async def chess_loop(user1, user2, ctx, bot):
         if cancel:
             return
         if game_over:
-            embed = nextcord.Embed(title=f"Game over!",
+            embed = discord.Embed(title=f"Game over!",
                                 description=f"{user2.mention} won the game! GG",
-                                color=nextcord.Color.green())
+                                color=discord.Color.green())
             await ctx.send(embed=embed)
             return
 
@@ -86,16 +86,16 @@ async def board_move(player, board, ctx, bot):
         except asyncio.TimeoutError:
             # That awkward moment they leave you on read (You left them speechless!)
             # Basically we want to cancel the game tbf
-            embed = nextcord.Embed(title=f"Game canceled!",
+            embed = discord.Embed(title=f"Game canceled!",
                                 description=f"{player.mention} took too long to respond.",
-                                color=nextcord.Color.red())
+                                color=discord.Color.red())
             await ctx.send(embed=embed)
             return
         if message.content.lower() == "cancel":
             # If the message was cancel, then cancel...
-            embed = nextcord.Embed(title=f"Game canceled!",
+            embed = discord.Embed(title=f"Game canceled!",
                                 description=f"{player.mention} canceled the game.",
-                                color=nextcord.Color.red())
+                                color=discord.Color.red())
             await ctx.send(embed=embed)
             # Delete their messages to make it a little nicer
             delete_array = [message]
@@ -119,9 +119,9 @@ async def board_move(player, board, ctx, bot):
                     move = chess.Move.from_uci(joined)
                     if move in board.legal_moves:
                         # Check if the move was valid
-                        embed = nextcord.Embed(title=f"Move",
+                        embed = discord.Embed(title=f"Move",
                                             description=f"{player.mention} moved {move_from} to {move_to}!",
-                                            color=nextcord.Color.green())
+                                            color=discord.Color.green())
                         await ctx.send(embed=embed)
                         # Make the move on the board
                         board.push(move)
@@ -134,14 +134,14 @@ async def board_move(player, board, ctx, bot):
                         drawing = svg2rlg("chess_board.svg")
                         renderPM.drawToFile(drawing, "chess_board.png", fmt="PNG")
                         # Send the image
-                        await ctx.send(file=nextcord.File(fp="chess_board.png"))
+                        await ctx.send(file=discord.File(fp="chess_board.png"))
                         # Stop their turn
                         turn_loop = False
                     else:
                         # If the move wasn't valid
-                        embed = nextcord.Embed(title=f"Illegal Move!",
+                        embed = discord.Embed(title=f"Illegal Move!",
                                             description=f"{player.mention}The move you just attempted is not legal. Please try again.",
-                                            color=nextcord.Color.red())
+                                            color=discord.Color.red())
                         await ctx.send(embed=embed)
                     # Delete the messages to make it a little nicer
                     # This, again, is a copy from above
@@ -155,8 +155,8 @@ async def board_move(player, board, ctx, bot):
                     pass
             except Exception as e:
                 # If they didnt do the correct syntax
-                embed = nextcord.Embed(title=f"Syntax Error",
+                embed = discord.Embed(title=f"Syntax Error",
                                     description=f"You did not use the correct syntax. Please do `piece, new position`",
-                                    color=nextcord.Color.red())
+                                    color=discord.Color.red())
                 embed.set_footer(text=e)
                 await ctx.send(embed=embed)

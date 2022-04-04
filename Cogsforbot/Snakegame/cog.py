@@ -1,5 +1,5 @@
-import nextcord
-from nextcord.ext import commands
+import discord
+from discord.ext import commands
 import time
 import random
 
@@ -100,8 +100,8 @@ class Snakegame(commands.Cog, name = "Snake"):
 
         time.sleep(5)
         message = await message.channel.fetch_message(message.id)
-        clockwise_reactions = nextcord.utils.get(message.reactions, emoji='🔃')
-        counter_clockwise_reactions = nextcord.utils.get(message.reactions, emoji='🔄')
+        clockwise_reactions = discord.utils.get(message.reactions, emoji='🔃')
+        counter_clockwise_reactions = discord.utils.get(message.reactions, emoji='🔄')
         
         if clockwise_reactions and counter_clockwise_reactions:
             if clockwise_reactions.count > counter_clockwise_reactions.count:

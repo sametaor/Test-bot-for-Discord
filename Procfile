@@ -1,1 +1,1 @@
-web: python bot.py & python dashboard.py
+web: python bot.py

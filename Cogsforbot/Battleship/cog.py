@@ -1,5 +1,5 @@
-import nextcord
-from nextcord.ext import commands
+import discord
+from discord.ext import commands
 import random
 
 class BattleShip(commands.Cog):
@@ -10,7 +10,7 @@ class BattleShip(commands.Cog):
 		self.bot = bot
 	
 	@commands.command(help='Play battleship with a member.')
-	async def battleship(self, ctx, member:nextcord.Member):
+	async def battleship(self, ctx, member:discord.Member):
 		
 		game_config_1 = {}
 		game_config_2 = {}
@@ -149,16 +149,16 @@ class BattleShip(commands.Cog):
 			def check(m):
 				return m.author == cr_player and m.channel == ctx.channel
 			if cr_player == member:
-				em1 = nextcord.Embed(title=f'BattleShip | {player.name} vs {member.name}',color=nextcord.Color.gold())
+				em1 = discord.Embed(title=f'BattleShip | {player.name} vs {member.name}',color=discord.Color.gold())
 				em1.add_field(name='Your board',value=p1str,inline=True)
 				em1.add_field(name='Opponent\'s board',value=hstr,inline=False)
-				em3 = nextcord.Embed(title=f'BattleShip | {player.name} vs {member.name}',color=nextcord.Color.gold())
+				em3 = discord.Embed(title=f'BattleShip | {player.name} vs {member.name}',color=discord.Color.gold())
 				em3.add_field(name='Opponent\'s board',value=hstr,inline=False)
 			else:
-				em1 = nextcord.Embed(title=f'BattleShip | {player.name} vs {member.name}',color=nextcord.Color.gold())
+				em1 = discord.Embed(title=f'BattleShip | {player.name} vs {member.name}',color=discord.Color.gold())
 				em1.add_field(name='Your board',value=p2str,inline=True)
 				em1.add_field(name='Opponent\'s board',value=hstr2[0:-1],inline=False)
-				em3 = nextcord.Embed(title=f'BattleShip | {player.name} vs {member.name}',color=nextcord.Color.gold())
+				em3 = discord.Embed(title=f'BattleShip | {player.name} vs {member.name}',color=discord.Color.gold())
 				em3.add_field(name='Opponent\'s board',value=hstr2[0:-1],inline=False)
 			em1.add_field(name='Reference board', value="⏹1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣\n:regional_indicator_a:"+ ("⬛"*7)+"\n:regional_indicator_b:"+ ("⬛"*7)+"\n:regional_indicator_c:"+ ("⬛"*7)+"\n:regional_indicator_d:"+ ("⬛"*7)+"\n:regional_indicator_e:"+ ("⬛"*7)+"\n:regional_indicator_f:"+ ("⬛"*7), inline= False)
 			em1.add_field(name='Icons',value='🟢 = Ship\n🟦 = Water\n🟫 = Unknown Territory\n💥 = Hit a Ship\n❌ = Aimed but Missed',inline=True)
@@ -175,14 +175,14 @@ class BattleShip(commands.Cog):
 			while sq2 not in coords: 
 				sq1 = await self.bot.wait_for('message',check=check)
 				if sq1.content == 'cancel':
-					canbed = nextcord.Embed(title='Canceled',description=f'{cr_player.name} canceled the game :(',color=nextcord.Color.red())
+					canbed = discord.Embed(title='Canceled',description=f'{cr_player.name} canceled the game :(',color=discord.Color.red())
 					await ctx.send(embed=canbed)
 					await ctx.send(embed=canbed)
 					return
 				sq2 = sq1.content
 				
 				if sq2 not in coords:
-					em2 = nextcord.Embed(title='Error',description='Please enter a valid square/coordinate!',color=nextcord.Color.red())
+					em2 = discord.Embed(title='Error',description='Please enter a valid square/coordinate!',color=discord.Color.red())
 					await ctx.send(embed=em2)
 
 			if cr_player == member: 
@@ -289,7 +289,7 @@ class BattleShip(commands.Cog):
 			p1str, p2str = bstr.split(f'\n{baq*7}\n')
 			bothDone += 1
 			if bothDone == 2:
-				embed = nextcord.Embed(title=f'Game Status | {player.name} vs {member.name}',color=nextcord.Color.teal())
+				embed = discord.Embed(title=f'Game Status | {player.name} vs {member.name}',color=discord.Color.teal())
 				embed.add_field(name=player.name,value=actions[player],inline=False)
 				embed.add_field(name=member.name,value=actions[member],inline=False)
 				await ctx.send(embed=embed)
@@ -301,7 +301,7 @@ class BattleShip(commands.Cog):
 			else:
 				pass
 			if not winner == None:
-				winbed = nextcord.Embed(title='Winner!',description=f'{winner.name} has won the battleship game! Congrats! :tada:',color=nextcord.Color.green())
+				winbed = discord.Embed(title='Winner!',description=f'{winner.name} has won the battleship game! Congrats! :tada:',color=discord.Color.green())
 
 				await ctx.send(embed=winbed)
 				return

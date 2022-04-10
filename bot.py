@@ -168,6 +168,10 @@ async def on_command_error(ctx,error):
             pass
         elif ctx.message.content.startswith("&bsquit"):
             pass
+        elif ctx.message.content.startswith("&gsearch"):
+            pass
+        elif ctx.message.content.startswith("&gimgsearch"):
+            pass
         else:
             await ctx.send("That command does not exist")
     elif isinstance(error,commands.MissingRequiredArgument):

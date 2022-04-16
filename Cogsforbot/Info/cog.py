@@ -49,7 +49,7 @@ class Information(commands.Cog):
         target1 = target1.replace("!", "")
         target2 = await self.bot.fetch_user(target1)
         if target == self.bot.user:
-            await ctx.send(nextcord.Embed(title="Bot Info", description = 'Please use "&botinfo" to know more about me 🙂!', colour=self.bot.user.colour))
+            await ctx.send(embed=nextcord.Embed(title="Bot Info", description = 'Please use "&botinfo" to know more about me 🙂!', colour=self.bot.user.colour))
         else:
             userembed = nextcord.Embed(title=target, description=f"{target.mention} | **__{nextcord.PartialEmoji(name='IDcard', id=868046662306770985, animated=False)} ID: __** {target.id}", colour = target.colour, timestamp=ctx.message.created_at)
             userembed.add_field(name=f"__{nextcord.PartialEmoji(name='Top_Role', id=869212283941834764, animated=False)} Top role: __", value=target.top_role.mention, inline=True)

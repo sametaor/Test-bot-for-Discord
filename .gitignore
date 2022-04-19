@@ -1,0 +1,26 @@
+praw.py
+text to owo.py
+*.pyc
+__pycache__
+__pycache__/prawreddit.cpython-39.pyc
+__pycache__/discordtoken.cpython-39.pyc
+__pycache__/redditmeme.cpython-39.pyc
+bot.py
+__pycache__/texttoowo.cpython-39.pyc
+giverole.json
+levels.json
+users.json
+profanity.txt
+profanity.txt
+discordsecrets.py
+__pycache__/discordsecrets.cpython-39.pyc
+profanity.txt
+profanity.txt
+token.env
+Cogsforbot/Twentyfortyeight/.env
+Cogsforbot/Miscellaneous/aichat.env
+Cogsforbot/Music/.env
+Dashboard/Oauthtoken.env
+Cogsforbot/ImageManipulation/__pycache__/cog.cpython-310.pyc
+Cogsforbot/ImageManipulation/__pycache__/cog.cpython-310.pyc
+Cogsforbot/Google/__pycache__/cog.cpython-310.pyc

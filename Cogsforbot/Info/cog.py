@@ -1,7 +1,7 @@
 import nextcord
 import time
 import datetime
-import NextcordUtils
+from nextcord_paginator import Paginator
 from typing import Optional
 from nextcord import Spotify, Member
 from nextcord.ext import commands
@@ -75,17 +75,13 @@ class Information(commands.Cog):
             if target2.banner != None:
                 userembedb.set_image(url=target2.banner)
             if ctx.author.avatar != None:
-                userembed.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name} • Page 1")
-                userembeda.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name} • Page 2")
-                userembedb.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name} • Page 3")
-            userpaginator = NextcordUtils.Pagination.CustomEmbedPaginator(ctx)
-            userpaginator.add_reaction('⏮️', "first")
-            userpaginator.add_reaction('⏪', "back")
-            userpaginator.add_reaction('🔐', "lock")
-            userpaginator.add_reaction('⏩', "next")
-            userpaginator.add_reaction('⏭️', "last")
+                userembed.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name} • Page: 1 of 3")
+                userembeda.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name} • Page: 2 of 3")
+                userembedb.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name} • Page: 3 of 3")
             userembeds = [userembed,userembeda, userembedb]
-            await userpaginator.run(userembeds)
+            usermsg = await ctx.send(embed=userembeds[0])
+            userpaginator = Paginator(usermsg, userembeds, ctx.author, self.bot, timeout=120, footerpage=False, footerdatetime=False, footerboticon=False)
+            await userpaginator.start()
     
     @commands.command(aliases=["bot"])
     async def botinfo(self, ctx):
@@ -110,19 +106,14 @@ class Information(commands.Cog):
         botembedb.add_field(name=f"__{nextcord.PartialEmoji(name='Botcreator', id=876496012393476116, animated=False)} Creator: __", value=botappinfo.owner, inline=True)
         botembedb.add_field(name="__Codename: __", value=botappinfo.name, inline=True)
         botembed.set_thumbnail(url=botappinfo.icon.url)
-        botembed.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name} • Page 1")
+        botembed.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name} • Page: 1 of 3")
         botembeda.set_thumbnail(url=botappinfo.icon.url)
-        botembeda.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name} • Page 2")
+        botembeda.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name} • Page: 2 of 3")
         botembedb.set_thumbnail(url=botappinfo.icon.url)
-        botembedb.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name} • Page 3")
-        botpaginator = NextcordUtils.Pagination.CustomEmbedPaginator(ctx)
-        botpaginator.add_reaction('⏮️', "first")
-        botpaginator.add_reaction('⏪', "back")
-        botpaginator.add_reaction('🔐', "lock")
-        botpaginator.add_reaction('⏩', "next")
-        botpaginator.add_reaction('⏭️', "last")
+        botembedb.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name} • Page: 3 of 3")
         botembeds = [botembed,botembeda, botembedb]
-        await botpaginator.run(botembeds)
+        botmsg = await ctx.send(embed=botembeds[0])
+        botpaginator = Paginator(botmsg, botembeds, ctx.author, self.bot, timeout=120, footerpage=False, footerdatetime=False, footerboticon=False)
     
     @commands.command(aliases=["si","guildinfo", "guild", "server"])
     @commands.has_permissions(embed_links=True)

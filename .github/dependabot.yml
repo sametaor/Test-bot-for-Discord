@@ -11,8 +11,3 @@ updates:
       interval: "daily"
     assignees:
       - "sametaor"
-    ignore:
-      - dependency-name: "h11"
-      - dependency-name: "httpx"
-      - dependency-name: "httpcore"
-      - dependency-name: "rfc3986"

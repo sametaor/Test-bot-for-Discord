@@ -13,3 +13,4 @@ updates:
       - "sametaor"
     ignore:
       - dependency-name: "h11"
+      - dependency-name: "httpx"

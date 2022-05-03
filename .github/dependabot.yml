@@ -11,3 +11,5 @@ updates:
       interval: "daily"
     assignees:
       - "sametaor"
+    ignore:
+      - dependency-name: "h11"

@@ -18,7 +18,7 @@ googleapis-common-protos==1.56.0
 h11==0.11.0
 httpcore==0.14.7
 httplib2==0.20.4
-httpx==0.16.1
+httpx==0.22.0
 idna==3.3
 imgurpython==1.1.7
 instant-api-client==0.1.2        

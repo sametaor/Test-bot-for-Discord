@@ -3,6 +3,8 @@ import nextcord
 import datetime
 import os
 from nextcord.ext import commands
+from nextcord import Interaction, SlashOption, ChannelType
+from nextcord.abc import GuildChannel
 from wavelink.ext import spotify
 from dotenv.main import load_dotenv
 
@@ -32,8 +34,13 @@ class Music(commands.Cog):
     
     @commands.Cog.listener()
     async def on_wavelink_track_end(self, player: wavelink.Player, track: wavelink.Track, reason):
-        ctx = player.ctx
-        vc: player = ctx.voice_client
+        try:
+            ctx = player.ctx
+            vc: player = ctx.voice_client
+        except nextcord.HTTPException:
+            interaction = player.interaction
+            vc: player = interaction.guild.voice_client
+            
 
         if vc.loop:
             return await vc.play(track)
@@ -41,7 +48,10 @@ class Music(commands.Cog):
         if not player.queue.is_empty:
             next_song = vc.queue.get()
             await vc.play(next_song)
-            await ctx.send(f"now playing {next_song.title}")
+            try:
+                await ctx.send(f"now playing {next_song.title}")
+            except nextcord.HTTPException:
+                await interaction.send(f"now playing {next_song.title}")
         elif player.queue.is_empty:
             await ctx.send("Queue is empty, use &play <query> to play another song")
             await vc.disconnect()
@@ -66,6 +76,29 @@ class Music(commands.Cog):
             await vc.queue.put_wait(search)
             await ctx.send(f"Added `{search.title}` to the queue :)")
         vc.ctx = ctx
+        setattr(vc, "loop", False)
+    
+    @nextcord.slash_command(description="Play Music on the go!", guild_ids=[747733166378450962, 765200329456877599, 935473091100950568])
+    async def play(interaction: Interaction, channel: GuildChannel = SlashOption(channel_types=[ChannelType.voice], description="Voice Channel to Join"), search: str = SlashOption(description="Name of the song to be played")):
+        search = await wavelink.YouTubeTrack.search(query=search, return_first=True)
+        if not interaction.guild.voice_client:
+            vc: wavelink.Player = await channel.connect(cls=wavelink.Player)
+        elif not getattr(interaction.author.voice, "channel", None):
+            return await interaction.send("you have to be in a Voice Channel!")
+        else:
+            vc: wavelink.Player = interaction.guild.voice_client
+        
+        if vc.queue.is_empty and not vc.is_playing():
+            await vc.play(search)
+            conversion = datetime.timedelta(seconds=search.duration)
+            musicduration = str(conversion)
+            musicembed = nextcord.Embed(title="Now Playing", description=f"Song: [{search.title}]({search.uri})\n Artist: `{search.author}`\n Duration: `{musicduration}`")
+            musicembed.set_thumbnail(url=search.thumb)
+            await interaction.send(embed=musicembed)
+        else:
+            await vc.queue.put_wait(search)
+            await interaction.send(f"Added `{search.title}` to the queue :)")
+        vc.interaction = interaction
         setattr(vc, "loop", False)
 
     @commands.command()

@@ -29,7 +29,7 @@ nextcord-ext-activities==2022.4.2
 nextcord-paginator
 numpy==1.22.3
 Pillow==9.1.0
-praw==7.5.0
+praw==7.6.0
 prawcore==2.3.0
 protobuf==3.20.1
 prsaw==0.4.0

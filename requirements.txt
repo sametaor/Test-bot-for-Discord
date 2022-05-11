@@ -36,7 +36,7 @@ prsaw==0.4.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pyfiglet==0.8.post1
-pyparsing==3.0.8
+pyparsing==3.0.9
 python-dotenv==0.20.0
 PyYAML==6.0
 reportlab==3.6.9

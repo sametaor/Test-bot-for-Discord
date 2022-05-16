@@ -4,7 +4,7 @@ async-timeout==4.0.2
 attrs==21.4.0
 base91==1.0.1
 beautifulsoup4==4.11.1
-cachetools==5.0.0
+cachetools==5.1.0
 certifi==2021.10.8
 charset-normalizer==2.0.12       
 chess==1.9.0
@@ -14,7 +14,7 @@ google-api-core==2.7.3
 google-api-python-client==2.47.0 
 google-auth==2.6.6
 google-auth-httplib2==0.1.0      
-googleapis-common-protos==1.56.0 
+googleapis-common-protos==1.56.1 
 h11==0.11.0
 httpcore==0.12.3
 httplib2==0.20.4
@@ -36,7 +36,7 @@ prsaw==0.4.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pyfiglet==0.8.post1
-pyparsing==3.0.8
+pyparsing==3.0.9
 python-dotenv==0.20.0
 PyYAML==6.0
 reportlab==3.6.9

@@ -32,8 +32,6 @@ class AIresponse(commands.Cog):
             r=r[1]
             r=r.replace('"}', '')
             print(r)
-            if msg.author == 247283454440374274:
-                msg = msg.split(":userphone:", 1)[1]
             await msg.reply(str(r))
         await testbot.process_commands(msg)
     

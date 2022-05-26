@@ -64,7 +64,7 @@ class ControlPanel(nextcord.ui.View):
         
         try:
             next_song = self.vc.queue.get()
-            await self.vc.play(next_song)
+            await self.vc.stop()
             await interaction.message.edit(content=f"Now Playing `{next_song}`", view=self)
         except Exception:
             await interaction.response.send_message("The queue is empty", ephemeral=True)
@@ -188,7 +188,8 @@ class Music(commands.Cog):
         else:
             vc: wavelink.Player = ctx.voice_client
         
-        await vc.stop()
+        stopsong = await vc.queue.get()
+        await vc.play(stopsong)
         await ctx.send("Stopping current song...")
     
     @commands.command()

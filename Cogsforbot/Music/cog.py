@@ -119,7 +119,7 @@ class Music(commands.Cog):
             await vc.disconnect()
         
     @commands.command()
-    async def musicpanel(ctx: commands.Context):
+    async def musicpanel(self, ctx: commands.Context):
         if not ctx.voice_client:
             vc: wavelink.Player = await ctx.author.voice.channel.connect(cls=wavelink.Player)
         elif not getattr(ctx.author.voice, "channel", None):

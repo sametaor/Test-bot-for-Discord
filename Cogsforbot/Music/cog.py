@@ -193,6 +193,18 @@ class Music(commands.Cog):
         await ctx.send("Stopping current song...")
     
     @commands.command()
+    async def skip(self, ctx: commands.Context):
+        if not ctx.voice_client:
+            return await ctx.send("There is nothing playing right now")
+        elif not getattr(ctx.author.voice, "channel", None):
+            return await ctx.send("you have to be in a Voice Channel!")
+        else:
+            vc: wavelink.Player = ctx.voice_client
+        
+        await vc.stop()
+        await ctx.send("Stopping current song...")
+    
+    @commands.command()
     async def disconnect(self, ctx: commands.Context):
         if not ctx.voice_client:
             return await ctx.send("There is nothing playing right now")

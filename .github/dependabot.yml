@@ -16,3 +16,4 @@ updates:
       - dependency-name: "httpx"
       - dependency-name: "httpcore"
       - dependency-name: "rfc3986"
+      - dependency-name: "protobuf"

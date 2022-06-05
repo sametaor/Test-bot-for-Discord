@@ -13,7 +13,6 @@ updates:
       - "sametaor"
     ignore:
       - dependency-name: "h11"
-      - dependency-name: "httpx"
       - dependency-name: "httpcore"
       - dependency-name: "rfc3986"
       - dependency-name: "protobuf"

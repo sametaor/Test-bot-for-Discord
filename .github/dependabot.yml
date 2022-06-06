@@ -17,3 +17,8 @@ updates:
       - dependency-name: "httpcore"
       - dependency-name: "rfc3986"
       - dependency-name: "protobuf"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      # Check for updates to GitHub Actions every weekday
+      interval: "daily"

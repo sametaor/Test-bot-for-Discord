@@ -18,7 +18,6 @@ updates:
       - dependency-name: "rfc3986"
       - dependency-name: "protobuf"
       - dependency-name: "nextcord-ext-activities"
-        versions: ["2022.4.2"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

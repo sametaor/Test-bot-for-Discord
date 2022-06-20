@@ -18,6 +18,7 @@ updates:
       - dependency-name: "rfc3986"
       - dependency-name: "protobuf"
       - dependency-name: "nextcord-ext-activities"
+      - dependency-name: "charset-normalizer"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

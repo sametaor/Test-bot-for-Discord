@@ -72,12 +72,20 @@ class Information(commands.Cog):
                 userembed.set_thumbnail(url=target.avatar.url)
                 userembeda.set_thumbnail(url=target.avatar.url)
                 userembedb.set_thumbnail(url=target.avatar.url)
+            if target.avatar == None:
+                userembed.set_thumbnail(url="https://img.icons8.com/fluency/96/000000/name.png")
+                userembeda.set_thumbnail(url="https://img.icons8.com/fluency/96/000000/name.png")
+                userembedb.set_thumbnail(url="https://img.icons8.com/fluency/96/000000/name.png")
             if target2.banner != None:
                 userembedb.set_image(url=target2.banner)
             if ctx.author.avatar != None:
                 userembed.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name} • Page: 1 of 3")
                 userembeda.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name} • Page: 2 of 3")
                 userembedb.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name} • Page: 3 of 3")
+            if ctx.author.avatar == None:
+                userembed.set_footer(icon_url="https://img.icons8.com/fluency/48/000000/test-account.png", text=f"Requested by {ctx.author.name} • Page: 1 of 3")
+                userembeda.set_footer(icon_url="https://img.icons8.com/fluency/48/000000/test-account.png", text=f"Requested by {ctx.author.name} • Page: 2 of 3")
+                userembedb.set_footer(icon_url="https://img.icons8.com/fluency/48/000000/test-account.png", text=f"Requested by {ctx.author.name} • Page: 3 of 3")
             userembeds = [userembed,userembeda, userembedb]
             usermsg = await ctx.send(embed=userembeds[0])
             userpaginator = Paginator(usermsg, userembeds, ctx.author, self.bot, timeout=120, footerpage=False, footerdatetime=False, footerboticon=False)
@@ -145,7 +153,10 @@ class Information(commands.Cog):
         guildembed.add_field(name=f"{nextcord.PartialEmoji(name='Serverfeature', id=875656634280579082, animated=False)} Features: ", value=('\n'.join(f"{nextcord.PartialEmoji(name='MemberEnter', id=875359683517509633, animated=False)} **`{x}`**".replace("_", " ") for x in ctx.guild.features)).title() if ctx.guild.features else 'N/A', inline=False)
         if ctx.guild.banner != None:
             guildembed.set_image(url=ctx.guild.banner)
-        guildembed.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name}")
+        if ctx.author.avatar != None:
+            guildembed.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name}")
+        if ctx.author.avatar == None:
+            guildembed.set_footer(icon_url="https://img.icons8.com/fluency/96/000000/name.png", text=f"Requested by {ctx.author.name}")
         await ctx.send(embed=guildembed)
 
     @commands.command(aliases=["el", "emoji", "emote", "emotelist"])
@@ -157,10 +168,16 @@ class Information(commands.Cog):
     async def avatar(self, ctx, target : Optional[Member]):
         if not target:
             target = ctx.message.author
-        avatar = target.avatar.url
+        if target.avatar != None:
+            avatar = target.avatar.url
+        if target.avatar == None:
+            avatar = "https://img.icons8.com/fluency/96/000000/name.png"
         embed = nextcord.Embed(title=target.name, description=target.mention, colour=target.colour)
         embed.set_image(url=avatar)
-        embed.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name}")
+        if ctx.author.avatar != None:
+            embed.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name}")
+        if ctx.author.avatar == None:
+            embed.set_footer(icon_url="https://img.icons8.com/fluency/96/000000/name.png", text=f"Requested by {ctx.author.name}")
         await ctx.send(embed=embed)
     
     

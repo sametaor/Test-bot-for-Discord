@@ -37,7 +37,7 @@ pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pyfiglet==0.8.post1
 pyparsing==3.0.9
-python-dotenv==0.20.0
+python-dotenv==0.21.0
 PyYAML==6.0
 reportlab==3.6.11
 requests==2.28.1

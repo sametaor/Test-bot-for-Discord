@@ -47,7 +47,7 @@ six==1.16.0
 sniffio==1.3.0
 soupsieve==2.3.2.post1
 svglib==1.4.1
-tinycss2==1.1.1
+tinycss2==1.2.1
 update-checker==0.18.0
 urbandictionary==1.1
 uritemplate==4.1.1

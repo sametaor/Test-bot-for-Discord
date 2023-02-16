@@ -13,7 +13,7 @@ spotifyclientsecret = os.getenv('SPOTIFYCLIENTSECRET')
 
 async def node_connect(self):
     await self.bot.wait_until_ready()
-    await wavelink.NodePool.create_node(bot = self.bot, host='lavalinkinc.ml', port=443, password='incognito', https=True, spotify_client=spotify.SpotifyClient(client_id=spotifyclientid, client_secret=spotifyclientsecret))
+    await wavelink.NodePool.create_node(bot = self.bot, host='narco.buses.rocks', port=2269, password='glasshost1984', https=True, spotify_client=spotify.SpotifyClient(client_id=spotifyclientid, client_secret=spotifyclientsecret))
 
 class ControlPanel(nextcord.ui.View):
     def __init__(self, vc, ctx):

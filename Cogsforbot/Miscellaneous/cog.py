@@ -31,6 +31,7 @@ class AIresponse(commands.Cog):
             r=r.split('"message":"')
             r=r[1]
             r=r.replace('"}', '')
+            r=r.replace('","warning":"No warning"','')
             print(r)
             await msg.reply(str(r))
         await testbot.process_commands(msg)

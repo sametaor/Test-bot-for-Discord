@@ -1,5 +1,6 @@
 import nextcord
 from nextcord.ext import commands
+from prsaw import RandomStuffV4
 import requests
 import os
 from dotenv import load_dotenv
@@ -16,23 +17,12 @@ class AIresponse(commands.Cog):
         if testbot.user == msg.author:
             return
         if msg.channel.name == 'ai-chat':
-            url = "https://random-stuff-api.p.rapidapi.com/ai"
             text = msg.content
-            querystring = {"msg":text,"bot_name":"Tachyon","bot_gender":"Male","bot_master":"sametaor","bot_age":"2","bot_build":"Public ","bot_birth_year":"2020","bot_birth_date":"15th April, 2020","bot_favorite_color":"Blue"}
-
-            headers = {
-            'authorization': os.getenv('RANDOMSTUFFAPIKEY'),
-            'x-rapidapi-host': "random-stuff-api.p.rapidapi.com",
-            'x-rapidapi-key': os.getenv('RAPIDAPIKEY')
-            }
-            response = requests.request("GET", url, headers=headers, params=querystring)
-
-            r=response.text
-            r=r.split('"AIResponse":"')
-            r=r[1]
-            r=r.replace('"}', '')
-            print(r)
-            await msg.reply(str(r))
+            rs = RandomStuffV4()
+            response = rs.get_ai_response(text)
+            print(response)
+            await msg.reply(str(response))
+            rs.close()
         await testbot.process_commands(msg)
     
     @commands.command()

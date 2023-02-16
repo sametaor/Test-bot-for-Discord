@@ -28,10 +28,11 @@ class AIresponse(commands.Cog):
             response = requests.request("GET", url, headers=headers, params=querystring)
 
             r=response.text
-            r=r.split('"message":"')
+            r=r.split(':')
             r=r[1]
             r=r.replace('"}"', '')
-            r=r.rstrip('","warning":"No warning')
+            r=r.replace('","warning"','')
+            r=r.replace('"','')
             print(r)
             await msg.reply(str(r))
         await testbot.process_commands(msg)

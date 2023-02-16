@@ -27,7 +27,7 @@ multidict==6.0.2
 nextcord==2.3.3
 nextcord-ext-activities==2022.4.2
 numpy==1.23.4
-Pillow==9.2.0
+Pillow==9.4.0
 praw==7.6.0
 prawcore==2.3.0
 protobuf==3.20.1

@@ -17,6 +17,7 @@ updates:
       - dependency-name: "httpcore"
       - dependency-name: "rfc3986"
       - dependency-name: "protobuf"
+        versions: "4.21.12"
       - dependency-name: "nextcord-ext-activities"
       - dependency-name: "charset-normalizer"
   - package-ecosystem: "github-actions"

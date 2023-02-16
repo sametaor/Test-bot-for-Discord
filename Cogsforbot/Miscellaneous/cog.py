@@ -5,8 +5,6 @@ import requests
 import os
 from dotenv import load_dotenv
 
-load_dotenv('aichat.env')
-
 class AIresponse(commands.Cog):
     def __init__(self, bot):
         self.bot = bot

@@ -1,7 +1,6 @@
 import nextcord
 import time
 import datetime
-from nextcord_paginator import Paginator
 from typing import Optional
 from nextcord import Spotify, Member
 from nextcord.ext import commands
@@ -86,10 +85,9 @@ class Information(commands.Cog):
                 userembed.set_footer(icon_url="https://img.icons8.com/fluency/48/000000/test-account.png", text=f"Requested by {ctx.author.name} • Page: 1 of 3")
                 userembeda.set_footer(icon_url="https://img.icons8.com/fluency/48/000000/test-account.png", text=f"Requested by {ctx.author.name} • Page: 2 of 3")
                 userembedb.set_footer(icon_url="https://img.icons8.com/fluency/48/000000/test-account.png", text=f"Requested by {ctx.author.name} • Page: 3 of 3")
-            userembeds = [userembed,userembeda, userembedb]
-            usermsg = await ctx.send(embed=userembeds[0])
-            userpaginator = Paginator(usermsg, userembeds, ctx.author, self.bot, timeout=120, footerpage=False, footerdatetime=False, footerboticon=False)
-            await userpaginator.start()
+            await ctx.send(embed=userembed)
+            await ctx.send(embed=userembeda)
+            await ctx.send(embed=userembedb)
     
     @commands.command(aliases=["bot"])
     async def botinfo(self, ctx):
@@ -119,9 +117,10 @@ class Information(commands.Cog):
         botembeda.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name} • Page: 2 of 3")
         botembedb.set_thumbnail(url=botappinfo.icon.url)
         botembedb.set_footer(icon_url=ctx.author.avatar.url, text=f"Requested by {ctx.author.name} • Page: 3 of 3")
-        botembeds = [botembed,botembeda, botembedb]
-        botmsg = await ctx.send(embed=botembeds[0])
-        botpaginator = Paginator(botmsg, botembeds, ctx.author, self.bot, timeout=120, footerpage=False, footerdatetime=False, footerboticon=False)
+        await ctx.send(embed=botembed)
+        await ctx.send(embed=botembeda)
+        await ctx.send(embed=botembedb)
+
     
     @commands.command(aliases=["si","guildinfo", "guild", "server"])
     @commands.has_permissions(embed_links=True)

@@ -24,7 +24,7 @@ imgurpython==1.1.7
 instant-api-client==0.1.2        
 lxml==4.9.2
 multidict==6.0.4
-nextcord==2.3.3
+nextcord==2.4.0
 nextcord-ext-activities==2022.4.2
 numpy==1.24.2
 Pillow==9.4.0

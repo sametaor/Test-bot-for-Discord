@@ -11,7 +11,7 @@ chess==1.9.4
 cssselect2==0.7.0
 frozenlist==1.3.3
 google-api-core==2.11.0
-google-api-python-client==2.80.0 
+google-api-python-client==2.81.0 
 google-auth==2.16.2
 google-auth-httplib2==0.1.0      
 googleapis-common-protos==1.58.0 
@@ -24,7 +24,7 @@ imgurpython==1.1.7
 instant-api-client==0.1.2        
 lxml==4.9.2
 multidict==6.0.4
-nextcord==2.4.0
+nextcord==2.4.1
 nextcord-ext-activities==2022.4.2
 numpy==1.24.2
 Pillow==9.4.0
@@ -52,6 +52,8 @@ urbandictionary==1.1
 uritemplate==4.1.1
 urllib3==1.26.14
 wavelink==2.0.2
+urllib3==1.26.15
+wavelink==2.0.1
 webencodings==0.5.1
 websocket-client==1.5.1
 wikipedia==1.4.0

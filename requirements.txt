@@ -53,7 +53,7 @@ uritemplate==4.1.1
 urllib3==1.26.14
 wavelink==2.0.2
 urllib3==1.26.15
-wavelink==2.0.1
+wavelink==2.0.2
 webencodings==0.5.1
 websocket-client==1.5.1
 wikipedia==1.4.0

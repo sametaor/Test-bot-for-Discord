@@ -51,9 +51,9 @@ update-checker==0.18.0
 urbandictionary==1.1
 uritemplate==4.1.1
 urllib3==1.26.15
-wavelink==2.0.3
+wavelink==2.1.0
 urllib3==1.26.15
-wavelink==2.0.3
+wavelink==2.1.0
 webencodings==0.5.1
 websocket-client==1.5.1
 wikipedia==1.4.0

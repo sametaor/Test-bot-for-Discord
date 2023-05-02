@@ -20,6 +20,7 @@ updates:
         versions: "4.21.12"
       - dependency-name: "nextcord-ext-activities"
       - dependency-name: "charset-normalizer"
+      - dependency-name: "urllib3"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

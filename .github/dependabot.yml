@@ -21,6 +21,7 @@ updates:
       - dependency-name: "nextcord-ext-activities"
       - dependency-name: "charset-normalizer"
       - dependency-name: "urllib3"
+      - dependency-name: "yarl"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

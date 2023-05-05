@@ -38,7 +38,7 @@ pyfiglet==0.8.post1
 pyparsing==3.0.9
 python-dotenv==1.0.0
 PyYAML==6.0
-reportlab==3.6.13
+reportlab==4.0.0
 requests==2.29.0
 rfc3986==1.5.0
 rsa==4.9

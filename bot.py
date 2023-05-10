@@ -237,14 +237,14 @@ async def guess(context):
 @testbot.command(aliases=["dice", "diceroll", "rd"])
 async def rolldice(ctx):
     n = random.randrange(1, 7)
-    diceembed = nextcord.Embed(title="🎲 Roll the Dice 🎲", description=f"{n}🎲", colour=nextcord.Colour.brand_green, timestamp=ctx.message.created_at)
+    diceembed = nextcord.Embed(title="🎲 Roll the Dice 🎲", description=f"{n}🎲", colour=nextcord.Colour.brand_green(), timestamp=ctx.message.created_at)
     await ctx.send(embed=diceembed)
 
 @testbot.command()
 async def coinflip(ctx):
     choices = ["Heads", "Tails"]
     coin = random.choice(choices)
-    coinembed=nextcord.Embed(title=":coin: Coin Flip :coin:", description=f"{coin}:coin:", colour=nextcord.Colour.gold, timestamp=ctx.message.created_at)
+    coinembed=nextcord.Embed(title=":coin: Coin Flip :coin:", description=f"{coin}:coin:", colour=nextcord.Colour.gold(), timestamp=ctx.message.created_at)
     await ctx.send(embed=coinembed)
 
 for folder in os.listdir("Cogsforbot"):

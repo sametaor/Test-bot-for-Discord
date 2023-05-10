@@ -21,4 +21,10 @@ outputs  = ["It is certain.",
             "Maybe.",
             "Because yes.",
             "E.",
-            "Idk man, idk."]
+            "Idk man, idk.",
+            "Huh? Are you asking me?",
+            "Come back tomorrow",
+            "Amazing. Every word of what you just said was wrong.",
+            "🍿",
+            "Ok, but did I ask?",
+            "Ok and?"]

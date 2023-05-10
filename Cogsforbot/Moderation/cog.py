@@ -66,13 +66,12 @@ class Moderation(commands.Cog):
     @commands.has_permissions(ban_members=True)
     async def unban(self, ctx,*,member):
         banned_users = await ctx.guild.bans()
-        member_name, member_desc = member.split('#')
         for banned_entry in banned_users:
             user = banned_entry.user
 
-            if(user.name, user.discriminator)==(member_name, member_desc):
+            if user==member:
                 await ctx.guild.unban(user)
-                await ctx.send(member_name + f" has been unbanned from {ctx.guild.name}")
+                await ctx.send(member + f" has been unbanned from {ctx.guild.name}")
                 return
 
         await ctx.send(member + " was not found.")

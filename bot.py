@@ -41,80 +41,10 @@ status = cycle([
     'Gamez on your phone',
     '↑↑↓↓←→←→BA Start',
     'Amogus',
-    'Songs'
+    'Songs',
+    'Battleship'
 ])
-EMOJIS_TO_USE_FOR_CALCULATOR = {"1":"1️⃣", "2":"2️⃣", "3":"3️⃣", "4":"4️⃣", "5":"5️⃣", "6":"6️⃣", "7":"7️⃣", "8":"8️⃣", "9":"9️⃣", "0":"0️⃣", "+":"➕", "-":"➖","x":"✖️","÷":"➗",".":"▫"}
-buttons = [
-    [
-        Button(style=ButtonStyle.grey, label='1'),
-        Button(style=ButtonStyle.grey, label='2'),
-        Button(style=ButtonStyle.grey, label='3'),
-        Button(style=ButtonStyle.blurple, label='x'),
-        Button(style=ButtonStyle.red, label='Exit')
-    ],
-    [
-        Button(style=ButtonStyle.grey, label='4'),
-        Button(style=ButtonStyle.grey, label='5'),
-        Button(style=ButtonStyle.grey, label='6'),
-        Button(style=ButtonStyle.blurple, label='÷'),
-        Button(style=ButtonStyle.red, label='←')
-    ],
-    [
-        Button(style=ButtonStyle.grey, label='7'),
-        Button(style=ButtonStyle.grey, label='8'),
-        Button(style=ButtonStyle.grey, label='9'),
-        Button(style=ButtonStyle.blurple, label='+'),
-        Button(style=ButtonStyle.red, label='Clear')
-    ],
-    [
-        Button(style=ButtonStyle.grey, label='00'),
-        Button(style=ButtonStyle.grey, label='0'),
-        Button(style=ButtonStyle.grey, label='.'),
-        Button(style=ButtonStyle.blurple, label='-'),
-        Button(style=ButtonStyle.green, label='=')
-    ],
-]
 
-disabled_buttons = [
-    [
-        Button(style=ButtonStyle.grey, label='1', disabled=True),
-        Button(style=ButtonStyle.grey, label='2', disabled=True),
-        Button(style=ButtonStyle.grey, label='3', disabled=True),
-        Button(style=ButtonStyle.blurple, label='x', disabled=True),
-        Button(style=ButtonStyle.red, label='Exit', disabled=True)
-    ],
-    [
-        Button(style=ButtonStyle.grey, label='4', disabled=True),
-        Button(style=ButtonStyle.grey, label='5', disabled=True),
-        Button(style=ButtonStyle.grey, label='6', disabled=True),
-        Button(style=ButtonStyle.blurple, label='÷', disabled=True),
-        Button(style=ButtonStyle.red, label='←', disabled=True)
-    ],
-    [
-        Button(style=ButtonStyle.grey, label='7', disabled=True),
-        Button(style=ButtonStyle.grey, label='8', disabled=True),
-        Button(style=ButtonStyle.grey, label='9', disabled=True),
-        Button(style=ButtonStyle.blurple, label='+', disabled=True),
-        Button(style=ButtonStyle.red, label='Clear', disabled=True)
-    ],
-    [
-        Button(style=ButtonStyle.grey, label='00', disabled=True),
-        Button(style=ButtonStyle.grey, label='0', disabled=True),
-        Button(style=ButtonStyle.grey, label='.', disabled=True),
-        Button(style=ButtonStyle.blurple, label='-', disabled=True),
-        Button(style=ButtonStyle.green, label='=', disabled=True)
-    ],
-]
-
-def calculator(exp):
-    o = exp.replace('x', '*')
-    o = o.replace('÷', '/')
-    result = ''
-    try:
-        result = str(eval(o))
-    except:
-        result = 'An error occured'
-    return result
 
 @tasks.loop(seconds=10)
 async def status_swap():
@@ -271,6 +201,7 @@ async def owofy(ctx):
         c = c.replace('&owofy', '', 1)
     elif ctx.message.content.startswith('&owo'):
         c = c.replace('&owo', '', 1)
+    await ctx.message.delete()
     await ctx.send(text_to_owo(c))
 
 def check(message):
@@ -306,13 +237,15 @@ async def guess(context):
 @testbot.command(aliases=["dice", "diceroll", "rd"])
 async def rolldice(ctx):
     n = random.randrange(1, 7)
-    await ctx.send(f"{n}🎲")
+    diceembed = nextcord.Embed(title="🎲 Roll the Dice 🎲", description=f"{n}🎲", colour=nextcord.Colour.brand_green, timestamp=ctx.message.created_at)
+    await ctx.send(embed=diceembed)
 
 @testbot.command()
 async def coinflip(ctx):
     choices = ["Heads", "Tails"]
     coin = random.choice(choices)
-    await ctx.send(f"{coin}:coin:")
+    coinembed=nextcord.Embed(title=":coin: Coin Flip :coin:", description=f"{coin}:coin:", colour=nextcord.Colour.gold, timestamp=ctx.message.created_at)
+    await ctx.send(embed=coinembed)
 
 for folder in os.listdir("Cogsforbot"):
     if os.path.exists(os.path.join("Cogsforbot", folder, "cog.py")):

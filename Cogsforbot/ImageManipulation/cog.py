@@ -21,9 +21,7 @@ class MemeGen(commands.Cog, name="Meme Generation"):
         pfp.resize((283,283))
         wanted.paste(pfp, (107,240))
         wanted.save("profile.jpg")
-        wantedembed=nextcord.Embed(title="Wanted💰", description=f"{ctx.message.author.mention}", colour=nextcord.Colour.yellow(), timestamp=ctx.message.created_at)
-        wantedembed.set_image(url="attachment://profile.jpg")
-        await ctx.send(embed=wantedembed)
+        await ctx.send(file = nextcord.File("profile.jpg"))
     
     @commands.command()
     async def society(self, ctx, *, text=None):
@@ -35,9 +33,7 @@ class MemeGen(commands.Cog, name="Meme Generation"):
         font = ImageFont.truetype("Cogsforbot/ImageManipulation/Myriad Pro Regular.ttf", 24)
         draw.text((7,11), text, (0, 0, 0), font=font)
         img.save("societyif.png")
-        societyembed=nextcord.Embed(title="Society🏗", description=f"{ctx.message.author.mention}", colour=nextcord.Colour.teal(), timestamp=ctx.message.created_at)
-        societyembed.set_image(url="attachment://profile.jpg")
-        await ctx.send(embed=societyembed)
+        await ctx.send(file = nextcord.File("societyif.jpg"))
     
 def setup(bot):
     bot.add_cog(MemeGen(bot))

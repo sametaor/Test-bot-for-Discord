@@ -33,7 +33,7 @@ class MemeGen(commands.Cog, name="Meme Generation"):
         font = ImageFont.truetype("Cogsforbot/ImageManipulation/Myriad Pro Regular.ttf", 24)
         draw.text((7,11), text, (0, 0, 0), font=font)
         img.save("societyif.png")
-        await ctx.send(file = nextcord.File("societyif.jpg"))
+        await ctx.send(file = nextcord.File("societyif.png"))
     
 def setup(bot):
     bot.add_cog(MemeGen(bot))

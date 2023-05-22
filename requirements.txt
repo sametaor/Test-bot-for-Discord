@@ -54,7 +54,7 @@ urllib3==1.26.15
 wavelink==2.3.1
 wavelink==2.3.1
 webencodings==0.5.1
-websocket-client==1.5.1
+websocket-client==1.5.2
 wikipedia==1.4.0
 Wikipedia-API==0.5.8
 yarl==1.8.2

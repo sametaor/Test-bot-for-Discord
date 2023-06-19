@@ -199,9 +199,10 @@ class Moderation(commands.Cog):
     
     @commands.command()
     @commands.has_permissions(read_message_history=True)
-    async def firstmsg(self, ctx):
-        async for message in ctx.channel.history(limit=1, oldest_first=True):
-            await ctx.send(f"{message.content} - {message.author}")
+    async def firstmsg(self, ctx: commands.clean_content=None):
+        if ctx != None:
+            async for message in ctx.channel.history(limit=1, oldest_first=True):
+                await ctx.send(f"{message.content} - {message.author}")
     
     @commands.command()
     @commands.has_permissions(read_message_history=True)

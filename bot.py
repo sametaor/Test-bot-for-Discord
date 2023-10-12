@@ -62,7 +62,7 @@ testbot.event(Events(testbot).on_reaction_add)
 @testbot.event
 async def on_member_join(member):
     channel = nextcord.utils.get(member.guild.channels, name='welcome')
-    await channel.send(f"Hello there {member.mention}! A warm welcome to you for joining {member.guild.name}!")
+    await channel.send(f"Hello there, {member.mention}! A warm welcome to you for joining {member.guild.name}!")
 
 
 @testbot.event

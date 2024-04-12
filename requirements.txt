@@ -19,7 +19,7 @@ h11==0.11.0
 httpcore==0.12.3
 httplib2==0.22.0
 httpx==0.16.1
-idna==3.6
+idna==3.7
 imgurpython==1.1.7
 instant-api-client==0.1.2        
 lxml==5.2.1

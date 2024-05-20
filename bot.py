@@ -5,6 +5,8 @@ import json
 import urllib
 import os
 import time
+import nextcord.ext.commands as commands
+import nextcord.ext.tasks as tasks
 from io import BytesIO
 from nextcord.enums import ChannelType
 from dotenv import load_dotenv
@@ -14,9 +16,7 @@ import random
 import datetime
 from nextcord import Member, Spotify
 from typing import Optional
-from nextcord.ext import commands, tasks
 from texttoowo import text_to_owo
-from redditmeme import reddit
 from itertools import cycle
 from weatherassets import *
 from eightballresponses import outputs
@@ -168,30 +168,6 @@ async def meme(ctx):
     em = nextcord.Embed(title=memeName, url=memeLink, description=f"u/{memeOP}", colour=nextcord.Colour.random())
     em.set_image(url=memeUrl)
     em.set_footer(text=f"r/{memeSub}")
-    await ctx.send(embed=em)
-
-@testbot.command()
-async def formuladank(ctx, f1meme="formuladank"):
-    subreddit = reddit.subreddit(f1meme)
-    all_subs = []
-
-    hot = subreddit.hot(limit = 100)
-
-    for submission in hot:
-        all_subs.append(submission)
-
-    random_sub = random.choice(all_subs)
-
-    name = random_sub.title
-    posturl = random_sub.permalink
-    url = random_sub.url
-    subredditname = random_sub.subreddit
-    subredditicon = random_sub.subreddit.icon_img
-
-    em = nextcord.Embed(title=name, url=f"https://www.reddit.com{posturl}")
-    em.set_image(url=url)
-    em.set_footer(icon_url=subredditicon, text=f"r/{subredditname}")
-
     await ctx.send(embed=em)
 
 @testbot.command(aliases=["owo"])

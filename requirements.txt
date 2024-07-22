@@ -26,7 +26,7 @@ lxml==5.2.2
 multidict==6.0.5
 nextcord==2.6.0
 nextcord-ext-activities==2022.4.2
-numpy==2.0.0
+numpy==2.0.1
 Pillow==10.4.0
 praw==7.7.1
 prawcore==2.4.0

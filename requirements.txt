@@ -23,7 +23,7 @@ idna==3.8
 imgurpython==1.1.7
 instant-api-client==0.1.2        
 lxml==5.3.0
-multidict==6.0.5
+multidict==6.1.0
 nextcord==2.6.0
 nextcord-ext-activities==2022.4.2
 numpy==2.1.1

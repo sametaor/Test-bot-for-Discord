@@ -9,7 +9,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: 'Auto-assign issue'
-              uses: pozil/auto-assign-issue@v2.0.1
+              uses: pozil/auto-assign-issue@v2.1.1
               with:
                   assignees: sametaor
                   numOfAssignee: 1

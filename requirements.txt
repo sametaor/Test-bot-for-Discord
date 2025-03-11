@@ -10,7 +10,7 @@ charset-normalizer==2.0.12
 chess==1.11.2
 cssselect2==0.8.0
 frozenlist==1.5.0
-google-api-core==2.24.1
+google-api-core==2.24.2
 google-api-python-client==2.163.0 
 google-auth==2.38.0
 google-auth-httplib2==0.2.0      

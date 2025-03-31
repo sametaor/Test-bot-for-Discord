@@ -33,7 +33,7 @@ prawcore==3.0.2
 protobuf==6.30.2
 prsaw==0.4.0
 pyasn1==0.6.1
-pyasn1-modules==0.4.1
+pyasn1-modules==0.4.2
 pyfiglet==1.0.2
 pyparsing==3.2.3
 python-dotenv==1.1.0

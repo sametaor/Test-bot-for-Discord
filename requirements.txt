@@ -49,7 +49,7 @@ svglib==1.5.1
 tinycss2==1.4.0
 update-checker==0.18.0
 urbandictionary==1.1
-uritemplate==4.1.1
+uritemplate==4.2.0
 urllib3==1.26.15
 wavelink==3.4.1
 wavelink==3.4.1

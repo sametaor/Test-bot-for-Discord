@@ -39,7 +39,7 @@ pyparsing==3.2.3
 python-dotenv==1.1.0
 PyYAML==6.0.2
 reportlab==4.4.1
-requests==2.32.3
+requests==2.32.4
 rfc3986==1.5.0
 rsa==4.9.1
 six==1.17.0

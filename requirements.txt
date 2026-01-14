@@ -17,7 +17,7 @@ google-auth-httplib2==0.3.0
 googleapis-common-protos==1.72.0 
 h11==0.11.0
 httpcore==0.12.3
-httplib2==0.31.0
+httplib2==0.31.1
 httpx==0.16.1
 idna==3.11
 imgurpython==1.1.7

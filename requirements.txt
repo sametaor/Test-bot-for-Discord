@@ -30,7 +30,7 @@ numpy==2.4.2
 Pillow==12.1.1
 praw==7.8.1
 prawcore==3.0.2
-protobuf==6.33.5
+protobuf==7.34.0
 prsaw==0.4.0
 pyasn1==0.6.2
 pyasn1-modules==0.4.2

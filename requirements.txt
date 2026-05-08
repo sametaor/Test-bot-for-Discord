@@ -13,7 +13,7 @@ frozenlist==1.8.0
 google-api-core==2.30.3
 google-api-python-client==2.196.0 
 google-auth==2.52.0
-google-auth-httplib2==0.3.1      
+google-auth-httplib2==0.4.0      
 googleapis-common-protos==1.75.0 
 h11==0.11.0
 httpcore==0.12.3

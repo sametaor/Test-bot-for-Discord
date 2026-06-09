@@ -47,7 +47,7 @@ sniffio==1.3.1
 soupsieve==2.8.4
 svglib==1.6.0
 tinycss2==1.5.1
-update-checker==0.18.0
+update-checker==1.0.0
 urbandictionary==1.1
 uritemplate==4.1.1
 urllib3==1.26.15

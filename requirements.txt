@@ -4,7 +4,7 @@ async-timeout==5.0.1
 attrs==26.1.0
 base91==1.0.1
 beautifulsoup4==4.15.0
-cachetools==7.1.4
+cachetools==7.1.5
 certifi==2026.7.22
 charset-normalizer==2.0.12       
 chess==1.11.2

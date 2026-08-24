@@ -22,7 +22,7 @@ httpx==0.16.1
 idna==3.19
 imgurpython==1.1.7
 instant-api-client==0.1.2        
-lxml==6.1.1
+lxml==6.1.2
 multidict==6.7.1
 nextcord==3.2.0
 nextcord-ext-activities==2022.4.2

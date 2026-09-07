@@ -11,7 +11,7 @@ chess==1.11.2
 cssselect2==0.10.1
 frozenlist==1.8.0
 google-api-core==2.36.0
-google-api-python-client==2.199.0 
+google-api-python-client==2.200.0 
 google-auth==2.57.0
 google-auth-httplib2==0.4.2      
 googleapis-common-protos==1.75.3 
